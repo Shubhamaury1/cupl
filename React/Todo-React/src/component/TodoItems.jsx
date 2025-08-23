@@ -5,7 +5,7 @@ function TodoItems({ todoItems, onDeleteClick }) {
     <>
       {todoItems.map((item) => (
         <AddItem
-          key={item}
+          key={item.name}
           todoName={item.name}
           todoDate={item.dueDate}
           onDeleteClick={onDeleteClick}

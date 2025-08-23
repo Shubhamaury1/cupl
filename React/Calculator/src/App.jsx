@@ -9,12 +9,10 @@ function App() {
   const onButtonClick = (buttonText) => {
     if (buttonText === "C") {
       setCalVal("");
-    }
-    else if (buttonText === "=") {
-      const result = eval(calVal)
-      setCalVal(result)
-    }
-    else {
+    } else if (buttonText === "=") {
+      const result = eval(calVal);
+      setCalVal(result);
+    } else {
       const newDisplayValue = calVal + buttonText;
       setCalVal(newDisplayValue);
     }
