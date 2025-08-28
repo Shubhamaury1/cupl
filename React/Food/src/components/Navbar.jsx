@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import {setSearch} from "../redux/slices/SearchSlice"
+import { setSearch } from "../redux/slices/SearchSlice"
+import { FaRegUserCircle } from "react-icons/fa";
+import Login from "./Login"
 function Navbar() {
 
   const dispatch = useDispatch();
@@ -14,7 +16,7 @@ function Navbar() {
           <h1 className="text-2xl font-bold">Foods</h1>
         </div>
 
-        <div >
+        <div>
           <input
             type="search"
             name="search"
@@ -25,8 +27,17 @@ function Navbar() {
             className="p-3 border border-gray-400 text-sm rounded-lg outline-none w-full lg:w-[25vw]  mt-4"
           />
         </div>
+
         <div className=" w-40 h-40">
           <img src="src/assets/chef.png" alt="" />
+        </div>
+        <div>
+          <FaRegUserCircle
+            size={60}
+            className="m-8  text-gray-700 cursor-pointer"
+            onClick={() => document.getElementById("my_modal_3").showModal()}
+          />
+          <Login/>
         </div>
       </nav>
     </>

@@ -1,16 +1,18 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from "../components/Navbar";
 import CategoryMenu from'../components/CategoryMenu'
 import FoodItems from '../components/FoodItems'
 import Cart from '../components/Cart'
+import Footer from '../components/Footer'
 
 function Home() {
   return (
       <>
-      <Navbar />
+     <Navbar />
       <CategoryMenu />
       <FoodItems />
-      <Cart/>
+      <Cart />
+      <Footer/>
       </>
   )
 }

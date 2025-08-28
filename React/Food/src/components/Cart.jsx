@@ -5,6 +5,7 @@ import ItemCart from "./ItemCart";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+
 function Cart() {
   const [activeCart, setActiveCart] = useState(false);
 
@@ -63,7 +64,10 @@ function Cart() {
             Total Amount : {totalPrice}
           </h3>
           <hr />
-          <button onClick={()=>navigate("/success") } className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] lg:w-[18vw] mt-5 mb-10">
+          <button
+            onClick={() => navigate("/success")}
+            className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] lg:w-[18vw] mt-5 mb-10"
+          >
             Checkout
           </button>
         </div>
@@ -74,6 +78,7 @@ function Cart() {
           totalQty > 0 && "animate-bounce delay-500 transition-all duration-500"
         }`}
       />
+      
     </>
   );
 }
