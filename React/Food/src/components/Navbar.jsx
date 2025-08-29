@@ -1,10 +1,12 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { setSearch } from "../redux/slices/SearchSlice"
+import { setSearch } from "../redux/slices/SearchSlice";
 import { FaRegUserCircle } from "react-icons/fa";
-import Login from "./Login"
-function Navbar() {
+import Login from "./Login";
+import ThemeController from "./ThemeController";
+// import Logout from "./Logout";
 
+function Navbar() {
   const dispatch = useDispatch();
   return (
     <>
@@ -13,14 +15,14 @@ function Navbar() {
           <h3 className="text-xl font-bold text-gray-600 mt-4">
             {new Date().toUTCString().slice(0, 16)}
           </h3>
-          <h1 className="text-2xl font-bold">Foods</h1>
+          <h1 className="text-2xl ">Foods</h1>
         </div>
 
         <div>
           <input
             type="search"
             name="search"
-            id=""
+            id="search"
             placeholder="Search Here"
             autoComplete="off"
             onChange={(e) => dispatch(setSearch(e.target.value))}
@@ -31,13 +33,16 @@ function Navbar() {
         <div className=" w-40 h-40">
           <img src="src/assets/chef.png" alt="" />
         </div>
+
+       <ThemeController/>
         <div>
           <FaRegUserCircle
             size={60}
             className="m-8  text-gray-700 cursor-pointer"
             onClick={() => document.getElementById("my_modal_3").showModal()}
           />
-          <Login/>
+          <Login />
+          {/* <Logout/> */}
         </div>
       </nav>
     </>

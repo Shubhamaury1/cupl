@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { PropagateLoader } from "react-spinners";
+import { clearCart } from "../redux/slices/CartSlice";
+import { useDispatch } from "react-redux";
 function Success() {
   const [loading, setLoading] = useState(true);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
+       dispatch(clearCart());
     }, 3000);
   }, []);
   return (

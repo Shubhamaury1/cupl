@@ -41,7 +41,7 @@ function Contact() {
         {/* Contact Form */}
         <motion.form
           onSubmit={handleSubmit}
-          className="bg-white shadow-md rounded-2xl p-6 flex flex-col gap-4"
+          className="bg-white shadow-md rounded-2xl p-6 flex flex-col gap-4 "
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -53,7 +53,7 @@ function Contact() {
             value={formData.name}
             onChange={handleChange}
             required
-            className="border p-3 rounded-xl focus:ring-2 focus:ring-green-500"
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-green-500 w-full"
           />
           <input
             type="email"
@@ -62,7 +62,7 @@ function Contact() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="border p-3 rounded-xl focus:ring-2 focus:ring-green-500"
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-green-500 w-full"
           />
           <textarea
             name="message"
@@ -71,11 +71,11 @@ function Contact() {
             value={formData.message}
             onChange={handleChange}
             required
-            className="border p-3 rounded-xl focus:ring-2 focus:ring-green-500"
+            className="border p-3 rounded-xl focus:ring-2 focus:ring-green-500 w-full"
           ></textarea>
           <button
             type="submit"
-            className="bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition"
+            className="bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition w-full"
           >
             Send Message
           </button>

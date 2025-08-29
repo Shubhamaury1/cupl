@@ -3,6 +3,8 @@ import toast, { Toaster } from "react-hot-toast";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+   const [usernameError, setUsernameError] = useState(false);
+   const [passwordError, setPasswordError] = useState(false);
   
 
   // const handleForm = (e) => {
@@ -14,6 +16,13 @@ function Login() {
 
   const handleForm = (e) => {
     e.preventDefault();
+    
+      if (!username || !password) {
+        toast.error("Please fill in all required fields.");
+        setUsernameError(!username);
+        setPasswordError(!password);
+        return;
+      }
     const storedUsername = localStorage.getItem("username");
     const storedPassword = localStorage.getItem("password");
 
@@ -27,17 +36,19 @@ function Login() {
     // Clear input fields
     setUsername("");
     setPassword("");
+      setUsernameError(false);
+      setPasswordError(false);
   };
   return (
     <>
       <dialog id="my_modal_3" className="modal rounded-xl">
         <div className="modal-box ">
-          <form method="dialog">
+          <form method="dialog" >
             {/* if there is a button in form, it will close the modal */}
             <button className=" text-xl absolute right-4 top-2 p-2 text-red-400 hover:text-red-600">
               ✕
             </button>
-          </form>
+          </form >
           <h2 className="font-bold text-lg text-center mt-4  ">Login</h2>
           <div className="login-container">
             <label htmlFor="userName">UserName</label>
