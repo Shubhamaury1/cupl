@@ -7,7 +7,9 @@ import Store from './redux/Store.js'
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={Store}>
-      <App />
+      <div className='dark:bg-gray-900'>
+        <App />
+      </div>
     </Provider>
   </StrictMode>
 );

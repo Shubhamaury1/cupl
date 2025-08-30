@@ -41,16 +41,18 @@ function Login() {
   };
   return (
     <>
-      <dialog id="my_modal_3" className="modal rounded-xl">
-        <div className="modal-box ">
-          <form method="dialog" >
+      <dialog id="my_modal_3" className="modal rounded-xl ">
+        <div className="modal-box bg-white dark:bg-gray-900">
+          <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
             <button className=" text-xl absolute right-4 top-2 p-2 text-red-400 hover:text-red-600">
               ✕
             </button>
-          </form >
-          <h2 className="font-bold text-lg text-center mt-4  ">Login</h2>
-          <div className="login-container">
+          </form>
+          <h2 className="font-bold text-lg text-center mt-4  text-gray-900 dark:text-white">
+            Login
+          </h2>
+          <div className="login-container text-gray-900 dark:text-white">
             <label htmlFor="userName">UserName</label>
             <input
               type="text"
@@ -59,7 +61,8 @@ function Login() {
               placeholder="Enter User Name"
               required
               value={username}
-              onChange={(e)=>setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-white dark:bg-gray-900"
             />
             <br />
             <label htmlFor="password">Password</label>
@@ -70,11 +73,12 @@ function Login() {
               placeholder="Enter Your Password"
               required
               value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-white dark:bg-gray-900"
             />
             <br />
             <button onClick={handleForm}>Login</button>
-             <Toaster position="top-center" reverseOrder={false} />
+            <Toaster position="top-center" reverseOrder={false} />
           </div>
         </div>
       </dialog>

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {Link} from 'react-router-dom'
 function About() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 dark:bg-gray-800">
       {/* Hero Section */}
       <motion.div
         className="max-w-3xl text-center mt-12"
@@ -11,8 +11,10 @@ function About() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">About Us</h1>
-        <p className="text-lg text-gray-600">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4 dark:text-green-400">
+          About Us
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-purple-200">
           We are passionate about delivering delicious food and creating
           memorable dining experiences. Our goal is to bring happiness through
           every meal we serve.
@@ -26,7 +28,7 @@ function About() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="bg-white shadow-md rounded-2xl p-6">
+        <div className="bg-white shadow-md rounded-2xl p-6 dark:bg-orange-200">
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">
             Our Mission
           </h2>
@@ -36,7 +38,7 @@ function About() {
           </p>
         </div>
 
-        <div className="bg-white shadow-md rounded-2xl p-6">
+        <div className="bg-white shadow-md rounded-2xl p-6 dark:bg-blue-200">
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">
             Our Vision
           </h2>

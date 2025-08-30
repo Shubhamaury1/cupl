@@ -10,12 +10,12 @@ function Navbar() {
   const dispatch = useDispatch();
   return (
     <>
-      <nav className="flex lg:flex-row justify-between mx-10 py-3 mb-10 mt-4 ">
+      <nav className="flex lg:flex-row justify-between mx-10 py-3 mb-10 ">
         <div>
-          <h3 className="text-xl font-bold text-gray-600 mt-4">
+          <h3 className="text-xl font-bold text-gray-600 mt-4 dark:text-orange-300">
             {new Date().toUTCString().slice(0, 16)}
           </h3>
-          <h1 className="text-2xl ">Foods</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-orange-300">BiteMeBaby</h1>
         </div>
 
         <div>
@@ -26,7 +26,7 @@ function Navbar() {
             placeholder="Search Here"
             autoComplete="off"
             onChange={(e) => dispatch(setSearch(e.target.value))}
-            className="p-3 border border-gray-400 text-sm rounded-lg outline-none w-full lg:w-[25vw]  mt-4"
+            className="p-3 border border-gray-400 text-sm rounded-lg outline-none w-full lg:w-[25vw]  mt-8 bg-white text-gray-800 dark:bg-orange-200 dark:text-black"
           />
         </div>
 
@@ -34,11 +34,11 @@ function Navbar() {
           <img src="src/assets/chef.png" alt="" />
         </div>
 
-       <ThemeController/>
+        <ThemeController />
         <div>
           <FaRegUserCircle
             size={60}
-            className="m-8  text-gray-700 cursor-pointer"
+            className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 "
             onClick={() => document.getElementById("my_modal_3").showModal()}
           />
           <Login />

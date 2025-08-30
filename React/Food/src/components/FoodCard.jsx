@@ -8,7 +8,7 @@ function FoodCard({ id, name, price, desc, img, rating, handleToast }) {
 
   return (
     <>
-      <div className="font-bold w-[250px] bg-white p-5 flex flex-col rounded-lg gap-2">
+      <div className="font-bold w-[250px] bg-white p-5 flex flex-col rounded-lg gap-2 text-gray-900 dark:bg-orange-200">
         <img
           src={img}
           alt=""
@@ -21,7 +21,7 @@ function FoodCard({ id, name, price, desc, img, rating, handleToast }) {
         <p className="text-sm font-normal">{desc}</p>
         <div className="flex justify-between">
           <span className="flex justify-center items-center">
-            <FaStar className="mr-1 text-yellow-500" />
+            <FaStar className="mr-1 text-yellow-500 dark:text-orange-500" />
             {rating}
           </span>
           <button

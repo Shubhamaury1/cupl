@@ -14,34 +14,33 @@ function ItemCart({ id, name, price, img, qty }) {
 
   return (
     <>
-      <div className="flex gap-2 shadow-md rounded-lg p-2 mb-3">
+      <div className="flex gap-2 shadow-md rounded-lg p-2 mb-3 dark:shadow-green-500">
         <MdDelete
           onClick={() => {
-            dispatch(removeFromCart({ id, name, price, img, qty }))
+            dispatch(removeFromCart({ id, name, price, img, qty }));
             toast(`${name} removed! your Cart`, {
               icon: "👋",
             });
-          }
-          }
-          className="absolute right-7 text-gray-600 cursor-pointer"
+          }}
+          className="absolute right-7 text-gray-600 cursor-pointer dark:text-red-500"
         />
         <img src={img} alt="" className="w-[50px] h-[50px]" />
 
-        <div className="leaing-5">
-          <h2 className="font-bold text-gray-800">{name}</h2>
+        <div className="leaing-5 ">
+          <h2 className="font-bold text-gray-800 dark:text-green-400">
+            {name}
+          </h2>
           <div className="flex justify-between">
-            <span className="text-green-500 font-bold">₹{price}</span>
+            <span className="text-green-500 font-bold ">₹{price}</span>
             <div className="flex justify-center item-center gap-2 absolute right-7">
               <FaPlus
-                onClick={() =>
-                   dispatch(incrementQty({ id}))
-                }
-                className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer"
+                onClick={() => dispatch(incrementQty({ id }))}
+                className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer "
               />
-              <span>{qty}</span>
+              <span className="dark:text-green-500 text-gray-900">{qty}</span>
               <FaMinus
                 onClick={() =>
-                  qty > 1 ? dispatch(decrementQty({ id })) : qty = 0
+                  qty > 1 ? dispatch(decrementQty({ id })) : (qty = 0)
                 }
                 className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer"
               />
