@@ -2,8 +2,10 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { setSearch } from "../redux/slices/SearchSlice";
 import { FaRegUserCircle } from "react-icons/fa";
-import Login from "./Login";
+import { NavLink } from "react-router-dom";
 import ThemeController from "./ThemeController";
+import Loginenewpage from "./Loginenewpage";
+//import Login from "./Login";
 // import Logout from "./Logout";
 
 function Navbar() {
@@ -15,7 +17,9 @@ function Navbar() {
           <h3 className="text-xl font-bold text-gray-600 mt-4 dark:text-orange-300">
             {new Date().toUTCString().slice(0, 16)}
           </h3>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-orange-300">BiteMeBaby</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-orange-300">
+            BiteMeBaby
+          </h1>
         </div>
 
         <div>
@@ -36,12 +40,18 @@ function Navbar() {
 
         <ThemeController />
         <div>
-          <FaRegUserCircle
+          <NavLink to="/loginenewpage">
+            <FaRegUserCircle
+              size={60}
+              className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 "
+            />
+          </NavLink>
+          {/* <FaRegUserCircle
             size={60}
             className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 "
             onClick={() => document.getElementById("my_modal_3").showModal()}
-          />
-          <Login />
+          /> */}
+          {/* <Login /> */}
           {/* <Logout/> */}
         </div>
       </nav>

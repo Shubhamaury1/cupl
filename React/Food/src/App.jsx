@@ -7,6 +7,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Policy from "./pages/Policy";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Loginenewpage from "./components/Loginenewpage";
 
 
 function App() {
@@ -20,10 +21,12 @@ function App() {
             path="/success"
             element={<ProtectedRoute element={<Success />} />}
           />
+          <Route path="/loginenewpage" element={ <Loginenewpage/>} />
 
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
+
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

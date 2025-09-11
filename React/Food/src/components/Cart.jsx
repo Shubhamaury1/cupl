@@ -74,6 +74,7 @@ function Cart() {
           </button>
         </div>
       </div>
+      
       <FaShoppingCart
         onClick={() => setActiveCart(!activeCart)}
         className={`rounded-full bg-white shadow-md text-6xl p-3 fixed bottom-8 right-4 text-gray-900 dark:text-white dark:bg-gray-800 ${
