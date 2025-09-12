@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import {Link} from 'react-router-dom'
 function About() {
   return (
+    
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 dark:bg-gray-800">
       {/* Hero Section */}
       <motion.div

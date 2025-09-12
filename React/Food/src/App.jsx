@@ -8,12 +8,12 @@ import Contact from "./pages/Contact";
 import Policy from "./pages/Policy";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loginenewpage from "./components/Loginenewpage";
-
+import Address from "./pages/Address";
+import Order from "./pages/Order";
 
 function App() {
   return (
     <>
-      
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -21,8 +21,9 @@ function App() {
             path="/success"
             element={<ProtectedRoute element={<Success />} />}
           />
-          <Route path="/loginenewpage" element={ <Loginenewpage/>} />
-
+          <Route path="/order" element={<Order />} />
+          <Route path="/loginenewpage" element={<Loginenewpage />} />
+          <Route path="/address" element={<Address />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
@@ -33,5 +34,4 @@ function App() {
     </>
   );
 }
-
 export default App;

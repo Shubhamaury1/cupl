@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 function Loginenewpage() {
   const [currentPage, setCurrentPage] = useState("welcome"); // welcome, login, register, home
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("orderHistory"); // or 'address'
+  const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState({ username: "", password: "" });
   const [registerData, setRegisterData] = useState({
@@ -13,23 +15,6 @@ function Loginenewpage() {
     password: "",
   });
 
-  const [saveaddress, SetSaveaddress] = useState({
-    name: "",
-    phone: "",
-    house: "",
-    landmark: "",
-    addresstype: "",
-    pincode: "",
-    city: "",
-    country: "",
-  });
-  // save addresss
-  const handleSubmitAddress = (e) => {
-    e.preventDefault();
-    localStorage.setItem("shippingAddress", JSON.stringify(saveaddress));
-    toast.success("Address saved successfully! 🚀");
-  };
-
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (loggedIn) {
@@ -37,23 +22,44 @@ function Loginenewpage() {
       setCurrentPage("home");
     }
   }, []);
-  // Dummy Login
+
   const handleLogin = (e) => {
     e.preventDefault();
-    if (loginData.username === "admin" && loginData.password === "12345") {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find(
+      (u) =>
+        u.username === loginData.username && u.password === loginData.password
+    );
+    if (user) {
       setIsLoggedIn(true);
       setCurrentPage("home");
       localStorage.setItem("isLoggedIn", "true");
+      toast.success("Login successful!");
     } else {
-      alert("Invalid credentials");
+      toast.error("Invalid credentials! Please register.");
+      setCurrentPage("register");
     }
   };
 
-  // Dummy Register
   const handleRegister = (e) => {
     e.preventDefault();
-    console.log("Registered:", registerData);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const userExists = users.some(
+      (user) => user.username === registerData.username
+    );
+
+    if (userExists) {
+      toast.error("Username already exists!");
+      return;
+    }
+
+    // Add new user
+    users.push(registerData);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    toast.success("Registered successfully!");
     setIsLoggedIn(true);
+    localStorage.setItem("isLoggedIn", "true");
     setCurrentPage("home");
   };
 
@@ -65,8 +71,6 @@ function Loginenewpage() {
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
-
-  // ========================= Pages =========================
 
   const renderWelcome = () => (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 space-y-6">
@@ -190,7 +194,8 @@ function Loginenewpage() {
           className={`cursor-pointer hover:text-gray-300 ${
             activeTab === "address" ? "text-blue-400" : ""
           }`}
-          onClick={() => setActiveTab("address")}
+          //onClick={() => setActiveTab("address")}
+          onClick={() => navigate("/address")}
         >
           Address
         </li>
@@ -265,157 +270,6 @@ function Loginenewpage() {
     );
   };
 
-  const renderAddress = () => (
-    <div className="p-8">
-      <h1 className="text-2xl font-semibold mb-4 text-gray-800">
-        Saved Addresses
-      </h1>
-
-      {isLoggedIn ? (
-        <form
-          className="flex flex-col bg-white rounded-lg shadow-md p-6"
-          onSubmit={handleSubmitAddress}
-        >
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Shipping Address
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Full Name */}
-            <div className="text-gray-800">
-              <label>Full Name</label>
-              <input
-                type="text"
-                name="fullname"
-                id="fullname"
-                required
-                value={saveaddress.name}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="Rahul"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-
-            {/* Phone Number */}
-            <div className="text-gray-800">
-              <label>Phone Number</label>
-              <input
-                type="tel"
-                name="phone"
-                id="phone"
-                required
-                value={saveaddress.phone}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="+91 123 456 7890"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-
-            {/* House Number */}
-            <div className="text-gray-800">
-              <label>House No.</label>
-              <input
-                type="text"
-                name="house"
-                id="house"
-                required
-                value={saveaddress.house}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="03"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-
-            {/* Nearby Landmark */}
-            <div className="text-gray-800">
-              <label>Nearby Landmark / Area</label>
-              <input
-                type="text"
-                name="landmark"
-                id="landmark"
-                required
-                value={saveaddress.landmark}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="Near Central Jail"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-
-            {/* Address Type */}
-            <div className="text-gray-800">
-              <label>Address Type</label>
-              <input
-                type="text"
-                name="addresstype"
-                id="addresstype"
-                required
-                value={saveaddress.addresstype}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="Home/Office"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-            {/* Pincode */}
-            <div className="text-gray-800">
-              <label>Pincode</label>
-              <input
-                type="text"
-                name="pincode"
-                id="pincode"
-                required
-                value={saveaddress.pincode}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="123456"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-
-            {/* City */}
-            <div className="text-gray-800">
-              <label>City</label>
-              <input
-                type="text"
-                name="city"
-                id="city"
-                required
-                value={saveaddress.city}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="Prayagraj"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-
-            {/* Country */}
-            <div className="text-gray-800">
-              <label>Country</label>
-              <input
-                type="text"
-                name="country"
-                id="country"
-                required
-                value={saveaddress.country}
-                onChange={(e) => SetSaveaddress(e.target.value)}
-                placeholder="India"
-                className="w-full border px-2 py-2 rounded bg-white"
-              />
-            </div>
-          </div>
-          {/* Submit Button */}
-          <div className="pt-6">
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-            >
-              Delivery Address
-            </button>
-          </div>
-        </form>
-      ) : (
-        <p className="text-gray-800">Please log in to view your addresses.</p>
-      )}
-    </div>
-  );
-
   const renderHome = () => (
     <div className="flex min-h-screen">
       {renderSidebar()}
@@ -425,7 +279,6 @@ function Loginenewpage() {
     </div>
   );
 
-  // ========================= RENDER =========================
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />;

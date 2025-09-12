@@ -1,24 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FaShoppingCart } from "react-icons/fa";
 import ItemCart from "./ItemCart";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
-
+import toast, { Toaster } from "react-hot-toast";
 function Cart() {
   const [activeCart, setActiveCart] = useState(false);
-
   const cartItems = useSelector((state) => state.cart.cart);
-
+  const navigate = useNavigate();
   const totalQty = cartItems.reduce((totalQty, item) => totalQty + item.qty, 0);
-
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.qty * item.price,
     0
   );
 
-  const navigate = useNavigate();
+  // Check login status
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  useEffect(() => {
+    if (activeCart && !isLoggedIn) {
+      navigate("/loginenewpage");
+    }
+  }, [activeCart, isLoggedIn, navigate]);
 
   return (
     <>
@@ -66,20 +69,49 @@ function Cart() {
             Total Amount : {totalPrice}
           </h3>
           <hr />
-          <button
+          {/* <button
             onClick={() => navigate("/success")}
+            className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] lg:w-[18vw] mt-5 mb-10 dark:shadow-green-500 shadow-md dark:bg-gray-800 dark:text-green-400"
+          >
+            Checkout
+          </button> */}
+
+          <button
+            //onClick={() => navigate("/address")}
+            onClick={() => {
+              if (cartItems.length === 0) {
+                toast.error("Cart is Empty!");
+                return;
+              }
+              
+              navigate("/address");
+            }}
             className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] lg:w-[18vw] mt-5 mb-10 dark:shadow-green-500 shadow-md dark:bg-gray-800 dark:text-green-400"
           >
             Checkout
           </button>
         </div>
       </div>
-      
-      <FaShoppingCart
-        onClick={() => setActiveCart(!activeCart)}
+
+      {/* <FaShoppingCart
+         onClick={() => setActiveCart(!activeCart)}
         className={`rounded-full bg-white shadow-md text-6xl p-3 fixed bottom-8 right-4 text-gray-900 dark:text-white dark:bg-gray-800 ${
           totalQty > 0 && "animate-bounce delay-500 transition-all duration-500"
         }`}
+      /> */}
+
+      <FaShoppingCart
+        onClick={() => {
+          if (!isLoggedIn) {
+            navigate("/loginenewpage");
+          } else {
+            setActiveCart(!activeCart);
+          }
+        }}
+        className={`rounded-full bg-white shadow-md text-6xl p-3 fixed bottom-8 right-4 text-gray-900 dark:text-white dark:bg-gray-800 ${
+          totalQty > 0 && "animate-bounce delay-500 transition-all duration-500"
+          }`}
+        
       />
     </>
   );

@@ -1,20 +1,20 @@
-import React from 'react'
+import React from "react";
 import Navbar from "../components/Navbar";
-import CategoryMenu from'../components/CategoryMenu'
-import FoodItems from '../components/FoodItems'
-import Cart from '../components/Cart'
-import Footer from '../components/Footer'
+import CategoryMenu from "../components/CategoryMenu";
+import FoodItems from "../components/FoodItems";
+import Cart from "../components/Cart";
+import Footer from "../components/Footer";
 
 function Home() {
   return (
-      <>
-     <Navbar />
+    <>
+      <Navbar />
       <CategoryMenu />
       <FoodItems />
       <Cart />
-      <Footer/>
-      </>
-  )
+      <Footer />
+    </>
+  );
 }
 
-export default Home
+export default Home;
