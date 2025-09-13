@@ -119,7 +119,7 @@ const cartItems = useSelector((state) => state.cart.cart);
     
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-semibold mb-4 text-gray-800">
+      <h1 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-green-500">
         Add New Address
       </h1>
       <form
@@ -266,7 +266,7 @@ const cartItems = useSelector((state) => state.cart.cart);
       <Toaster position="top-center" reverseOrder={false} />
       {/* Dispaly address*/}
       <div className="mt-10">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">
+        <h2 className="text-xl font-bold mb-4 text-gray-800  dark:text-green-500">
           Saved Addresses
         </h2>
         {addressList.length === 0 ? (
@@ -351,36 +351,6 @@ const cartItems = useSelector((state) => state.cart.cart);
           Order Placed
         </button> */}
 
-        {/* <button
-          onClick={() => {
-            if (selectedAddressIndex === null) {
-              toast.error("Please select address then order");
-              return;
-            }
-
-            // Sample cart items (replace with actual cart logic)
-            const cartItems = [
-              { name: "T-shirt", quantity: 2, price: 500 },
-              { name: "Shoes", quantity: 1, price: 1200 },
-            ];
-            const selectedAddress = addressList[selectedAddressIndex];
-            const order = {
-              id: Date.now(), // unique order ID
-              address: selectedAddress,
-              items: cartItems,
-              total: cartItems.reduce(
-                (acc, item) => acc + item.price * item.quantity,
-                0
-              ),
-            };
-            localStorage.setItem("lastOrder", JSON.stringify(order));
-            navigate("/order");
-          }}
-          className="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition"
-        >
-          Order Placed
-        </button> */}
-
         <button
           onClick={() => {
             if (selectedAddressIndex === null) {
@@ -395,7 +365,7 @@ const cartItems = useSelector((state) => state.cart.cart);
 
             const selectedAddress = addressList[selectedAddressIndex];
 
-            const order = {
+            const newOrder = {
               id: Date.now(),
               address: selectedAddress,
               items: cartItems,
@@ -404,9 +374,21 @@ const cartItems = useSelector((state) => state.cart.cart);
                 0
               ),
             };
+            //Get existing orders from localStorage
+            const existingOrders =
+              JSON.parse(localStorage.getItem("orderHistory")) || [];
 
-            localStorage.setItem("lastOrder", JSON.stringify(order));
-            navigate("/order");
+            //Add new order
+            existingOrders.push(newOrder);
+            //Save update orders
+            localStorage.setItem(
+              "orderHistory",
+              JSON.stringify(existingOrders)
+            );
+            //Save last order separate
+            localStorage.setItem("lastOrder", JSON.stringify(newOrder));
+
+            navigate("/success");
           }}
           className="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition"
         >

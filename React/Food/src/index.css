@@ -3,7 +3,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* :root{
+    background: rgb(244,244,244);
+} */
 *{
     font-family: 'Poppins',sans-serif;
     

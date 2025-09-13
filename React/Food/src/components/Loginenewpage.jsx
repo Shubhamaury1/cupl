@@ -47,12 +47,10 @@ function Loginenewpage() {
     const userExists = users.some(
       (user) => user.username === registerData.username
     );
-
     if (userExists) {
       toast.error("Username already exists!");
       return;
     }
-
     // Add new user
     users.push(registerData);
     localStorage.setItem("users", JSON.stringify(users));
@@ -67,7 +65,7 @@ function Loginenewpage() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentPage("home");
-    localStorage.removeItem("isLoggedIn"); // ✅ Clear login
+    localStorage.removeItem("isLoggedIn"); //Clear login
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
@@ -187,6 +185,7 @@ function Loginenewpage() {
             activeTab === "orderHistory" ? "text-blue-400" : ""
           }`}
           onClick={() => setActiveTab("orderHistory")}
+          //onClick={() => navigate("/order")}
         >
           Order History
         </li>
@@ -209,62 +208,65 @@ function Loginenewpage() {
     </aside>
   );
 
-  const renderOrderHistory = () => {
-    const dummyOrders = [
-      {
-        ame: "Paneer",
-        date: "01-06-2023",
-        total: "₹260",
-        status: "Delivered",
-      },
-      {
-        name: "Paneer Pizza",
-        date: "09-05-2021",
-        total: "₹480",
-        status: "Out for Delivery",
-      },
-      {
-        name: "Burger",
-        date: "10-08-2025",
-        total: "₹80",
-        status: "Dispatch",
-      },
-    ];
+  //order history
+  const [order, setOrder] = useState([]);
+  useEffect(() => {
+    const stored = localStorage.getItem("orderHistory");
+    if (stored) {
+      setOrder(JSON.parse(stored));
+    }
+  }, []);
 
+  const renderOrderHistory = () => {
     return (
-      <div className="p-8">
-        <h1 className="text-2xl font-semibold mb-4 text-gray-800">
+      <div className="p-8 text-gray-800 dark:bg-gray-800">
+        <h1 className="text-2xl font-bold mb-6 dark:text-green-500">
           Order History
         </h1>
 
-        {isLoggedIn ? (
-          dummyOrders.length > 0 ? (
-            <div className="space-y-4">
-              {dummyOrders.map((order, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-white border rounded shadow-sm text-gray-800"
-                >
-                  <p>
-                    <strong>Name:</strong> {order.name}
-                  </p>
-                  <p>
-                    <strong>Date:</strong> {order.date}
-                  </p>
-                  <p>
-                    <strong>Total:</strong> {order.total}
-                  </p>
-                  <p>
-                    <strong>Status:</strong> {order.status}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-800">You have no orders yet.</p>
-          )
+        {order.length === 0 ? (
+          <p>No orders found.</p>
         ) : (
-          <p className="text-gray-800">Please log in to view your orders.</p>
+          order.map((order, orderIndex) => (
+            <div key={orderIndex} className="mb-8">
+              <div className="space-y-4">
+                {order.items.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center dark:bg-blue-100"
+                  >
+                    <div>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-blue-600">
+                        {item.name}
+                      </p>
+                      {/* <p className="text-sm text-gray-600">
+                        Quantity: {item.qty}
+                      </p> */}
+                      <p className="text-sm text-gray-600 dark:text-green-600">
+                        Date: {new Date().toLocaleDateString("en-GB")}
+                      </p>
+                    </div>
+                    <div className=" flex flex-col mt-2 sm:mt-0">
+                      <span className=" px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+                        Status: Pending
+                      </span>
+                      {/* <Link to="/orderdetails">
+                        <button className="text-blue-500 mt-3 hover:text-blue-700 bg-gray-200 rounded-full font-medium text-sm px-3 py-1">
+                          view details
+                        </button>
+                      </Link> */}
+                      <button
+                        onClick={() => navigate(`/order-details/${order.id}`)}
+                        className="text-blue-600 hover:underline text-sm mt-2 dark:text-green-500"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
         )}
       </div>
     );

@@ -41,7 +41,7 @@ function Policy() {
           </div>
 
           {/* Terms of Service */}
-          <div className="bg-white shadow-md rounded-2xl p-6 dark:bg-gray-900 dark:bg-blue-100">
+          <div className="bg-white shadow-md rounded-2xl p-6  dark:bg-blue-100">
             <h2 className="text-2xl font-semibold text-gray-700 mb-2">
               📜 Terms of Service
             </h2>
