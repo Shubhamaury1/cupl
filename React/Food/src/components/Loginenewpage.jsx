@@ -243,7 +243,7 @@ function Loginenewpage() {
                         Quantity: {item.qty}
                       </p> */}
                       <p className="text-sm text-gray-600 dark:text-green-600">
-                        Date: {new Date().toLocaleDateString("en-GB")}
+                        Date: {new Date(order.id).toLocaleDateString("en-GB")}
                       </p>
                     </div>
                     <div className=" flex flex-col mt-2 sm:mt-0">
