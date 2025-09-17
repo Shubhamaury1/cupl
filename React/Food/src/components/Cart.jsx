@@ -43,10 +43,10 @@ function Cart() {
         </div>
 
         {cartItems.length > 0 ? (
-          cartItems.map((food) => {
+          cartItems.map((food,index) => {
             return (
               <ItemCart
-                key={food.id}
+                key={food.id||index}
                 id={food.id}
                 name={food.name}
                 price={food.price}

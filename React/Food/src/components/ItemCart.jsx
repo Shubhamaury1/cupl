@@ -39,7 +39,9 @@ function ItemCart({ id, name, price, img, qty }) {
                 }
                 className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer"
               />
-              <span className="dark:text-green-500 text-gray-900">{qty}</span>
+              <span className="dark:text-green-500 text-gray-900">
+                {Number(qty) || 1}
+              </span>
               <FaPlus
                 onClick={() => dispatch(incrementQty({ id }))}
                 className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer "
