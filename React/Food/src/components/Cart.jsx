@@ -9,9 +9,12 @@ function Cart() {
   const [activeCart, setActiveCart] = useState(false);
   const cartItems = useSelector((state) => state.cart.cart);
   const navigate = useNavigate();
-  const totalQty = cartItems.reduce((totalQty, item) => totalQty + item.qty, 0);
+  const totalQty = cartItems.reduce(
+    (totalQty, item) => totalQty + item.PQunatity,
+    0
+  );
   const totalPrice = cartItems.reduce(
-    (total, item) => total + item.qty * item.price,
+    (total, item) => total + item.PQunatity * item.price,
     0
   );
 
@@ -42,16 +45,16 @@ function Cart() {
           />
         </div>
 
-        {cartItems.length > 0 ? (
+        {cartItems.length > 0 ? (  
           cartItems.map((food,index) => {
             return (
               <ItemCart
-                key={food.id||index}
+                key={food.id || index}
                 id={food.id}
                 name={food.name}
                 price={food.price}
                 img={food.img}
-                qty={food.qty}
+                PQunatity={food.PQunatity}
               />
             );
           })

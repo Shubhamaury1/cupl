@@ -12,7 +12,9 @@ const CartSlice = createSlice({
       );
       if (existingItem) {
         state.cart = state.cart.map((item) =>
-          item.id === action.payload.id ? { ...item, qty: item.qty + 1 } : item
+          item.id === action.payload.id
+            ? { ...item, PQunatity: item.PQunatity + 1 }
+            : item
         );
       } else {
         state.cart.push(action.payload);
@@ -24,13 +26,17 @@ const CartSlice = createSlice({
     },
 
     incrementQty: (state, action) => {
-      state.cart = state.cart.map((item) => 
-        item.id === action.payload.id ? { ...item, qty: item.qty + 1 } : item
+      state.cart = state.cart.map((item) =>
+        item.id === action.payload.id
+          ? { ...item, PQunatity: item.PQunatity + 1 }
+          : item
       );
     },
     decrementQty: (state, action) => {
-        state.cart = state.cart.map((item) => 
-          item.id === action.payload.id ? { ...item, qty: item.qty - 1 } : item
+        state.cart = state.cart.map((item) =>
+          item.id === action.payload.id
+            ? { ...item, PQunatity: item.PQunatity - 1 }
+            : item
         );
     },
     clearCart: (state) => {
