@@ -131,7 +131,7 @@ function OrderDetails() {
           <h2 className="text-xl font-semibold mb-2">Shipping Address</h2>
           <div className="text-sm">
             <p>
-              <strong>Name:</strong> {order.address.name}
+              <strong>Name:</strong> {order.address.userName}
             </p>
             <p>
               <strong>Phone:</strong> {order.address.phone}
@@ -157,20 +157,20 @@ function OrderDetails() {
               >
                 <img
                   src={item.image}
-                 
                   className="w-20 h-20 object-cover rounded border dark:text-gray-900"
                 />
                 <div className="flex-1 text-sm dark:text-green-600">
                   <p className="font-semibold text-base">{item.name}</p>
                   <p>
-                    <span className="dark:font-bold">Quantity:</span> {item.qty}
+                    <span className="dark:font-bold">Quantity:</span>{" "}
+                    {item.PQunatity}
                   </p>
                   <p>
                     <span className="dark:font-bold">Price:</span>₹{item.price}
                   </p>
                   <p className="text-gray-700 font-medium  dark:text-green-600">
                     <span className="dark:font-bold">Total:</span> ₹
-                    {item.qty * item.price}
+                    {item.PQunatity * item.price}
                   </p>
                 </div>
               </div>

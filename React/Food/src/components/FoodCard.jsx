@@ -10,6 +10,7 @@ function FoodCard({ id, name, price, img, rating, userId, desc, handleToast }) {
   // Function to handle Add to Cart
   const handleAddToCart = async () => {
     const cartItem = {
+      id,
       PId:id,
       name,
       price,
