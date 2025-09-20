@@ -197,7 +197,7 @@ function Loginenewpage() {
           //onClick={() => setActiveTab("address")}
           onClick={() => navigate("/address")}
         >
-          Address
+          Manage Address
         </li>
         <li
           className="cursor-pointer hover:text-red-300 text-red-500 font-semibold"
@@ -208,16 +208,30 @@ function Loginenewpage() {
       </ul>
     </aside>
   );
-
-  //order history
-  const [order, setOrder] = useState([]);
+  // from the backend
+  const [orders, setOrders] = useState([]);
   useEffect(() => {
-    const stored = localStorage.getItem("orderHistory");
-    if (stored) {
-      setOrder(JSON.parse(stored));
-    }
+    const fetchOrder = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:7076/api/OrdersControllers"
+        );
+        //console.log("Fetched Orders:", response.data);
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Error to loading:", error);
+      }
+    };
+    fetchOrder();
   }, []);
 
+  // Check if the trackers array has any elements
+ const tracker =
+   orders.trackers && orders.trackers.length > 0
+     ? orders.trackers[0]
+     : { Status: "Pending", Date: "20-09-2025" };
+  
+  
   const renderOrderHistory = () => {
     return (
       <div className="p-8 text-gray-800 dark:bg-gray-800">
@@ -225,46 +239,93 @@ function Loginenewpage() {
           Order History
         </h1>
 
-        {order.length === 0 ? (
+        {orders.length === 0 ? (
           <p>No orders found.</p>
         ) : (
-          order.map((order, orderIndex) => (
-            <div key={orderIndex} className="mb-8">
+          orders.map((order) => (
+            // <div key={order.id} className="mb-8">
+            //   <div className="space-y-4">
+            //     {/* Since each order is a single item, we don't need to map over order.items */}
+            //     <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center dark:bg-blue-100">
+            //       <div>
+            //         <p className="text-lg font-semibold text-gray-900 dark:text-blue-600">
+            //           {order.productName}
+            //         </p>
+
+            //         <p className="text-lg font-semibold text-gray-900 dark:text-blue-600">
+            //           <img
+            //             src={order.imageUrl}
+            //             alt={order.productName}
+            //             className="w-32 h-32 object-cover rounded-lg"
+            //           />
+
+            //         </p>
+
+            //         <p className="text-sm text-gray-600 dark:text-green-600">
+            //           Ordered on: {tracker.Date}
+            //         </p>
+            //       </div>
+            //       <div className="flex flex-col mt-2 sm:mt-0">
+            //         <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+            //           Ordered: Confirm
+            //         </span>
+            //         <button
+            //           onClick={() => navigate(`/orderdetails/${order.id}`)}
+            //           className="text-blue-600 hover:underline text-sm mt-2 dark:text-green-500"
+            //         >
+            //           View Details
+            //         </button>
+            //       </div>
+            //     </div>
+            //   </div>
+            // </div>
+
+            <div key={order.id} className="mb-8">
               <div className="space-y-4">
-                {order.items.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center dark:bg-blue-100"
-                  >
-                    <div>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-blue-600">
-                        {item.name}
-                      </p>
-                      {/* <p className="text-sm text-gray-600">
-                        Quantity: {item.qty}
-                      </p> */}
-                      <p className="text-sm text-gray-600 dark:text-green-600">
-                        Date: {new Date(order.id).toLocaleDateString("en-GB")}
-                      </p>
-                    </div>
-                    <div className=" flex flex-col mt-2 sm:mt-0">
-                      <span className=" px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
-                        Status: Pending
-                      </span>
-                      {/* <Link to="/orderdetails">
-                        <button className="text-blue-500 mt-3 hover:text-blue-700 bg-gray-200 rounded-full font-medium text-sm px-3 py-1">
-                          view details
-                        </button>
-                      </Link> */}
+                {/* Order Item Card */}
+                <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
+                  {/* Left side: Image */}
+                  <div className="mb-4 sm:mb-0 flex  justify-center sm:justify-start">
+                    <img
+                      src={order.imageUrl}
+                      alt={order.productName}
+                      className="w-32 h-32 object-cover rounded-lg"
+                    />
+                    {/* <p className="text-sm text-gray-700 font-medium dark:text-green-600">
+                      Ordered on: {tracker.Date}
+                    </p> */}
+                  </div>
+
+                  {/* Middle: Product name */}
+                  <div className="flex flex-col sm:flex-1 justify-center items-center sm:items-start pl-4 sm:pl-6">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-blue-600 text-center sm:text-left">
+                      {order.productName}
+                    </p>
+
+                    {/* Ordered on date */}
+                    <p className="text-sm text-gray-700 font-medium dark:text-green-600">
+                      Ordered on: {tracker.Date}
+                    </p>
+                  </div>
+
+                  {/* Right side: Status and View Details */}
+                  <div className="flex flex-col justify-between items-center sm:items-end pl-4 sm:pl-6 mt-4 sm:mt-0">
+                    {/* Ordered Status */}
+                    <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
+                      Ordered: Confirm
+                    </span>
+
+                    {/* View Details Button */}
+                    <div className="mt-2">
                       <button
-                        onClick={() => navigate(`/order-details/${order.id}`)}
-                        className="text-blue-600 hover:underline text-sm mt-2 dark:text-green-500"
+                        onClick={() => navigate(`/orderdetails/${order.id}`)}
+                        className="text-blue-600 hover:underline text-sm dark:text-green-500"
                       >
                         View Details
                       </button>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           ))

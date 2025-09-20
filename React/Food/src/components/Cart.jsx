@@ -87,11 +87,12 @@ function Cart() {
                 return;
               }
               
-              navigate("/address");
+              // navigate("/address");
+              navigate("/confirmorderpage")
             }}
             className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] lg:w-[18vw] mt-5 mb-10 dark:shadow-green-500 shadow-md dark:bg-gray-800 dark:text-green-400"
           >
-            Checkout
+            Place Order
           </button>
         </div>
       </div>

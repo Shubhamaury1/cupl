@@ -351,7 +351,7 @@ function Address() {
   const [editIndex, setEditIndex] = useState(null);
   const [addressList, setAddressList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const cartItems = useSelector((state) => state.cart.cart);
+  //const cartItems = useSelector((state) => state.cart.cart);
   const navigate = useNavigate();
 
   const [saveaddress, setSaveaddress] = useState({
@@ -509,32 +509,32 @@ function Address() {
     }
   };
 
-  const handlePlaceOrder = async () => {
-    if (selectedAddressIndex === null) {
-      toast.error("Please select an address");
-      return;
-    }
-    if (cartItems.length === 0) {
-      toast.error("Cart is empty!");
-      return;
-    }
-    const selectedAddress = addressList[selectedAddressIndex];
-    const newOrder = {
-      uId: 1,
-      addressId: selectedAddress.id,
-    };
-    try {
-      await axios.post(
-        "https://localhost:7076/api/OrdersControllers",
-        newOrder
-      );
-      toast.success("Order placed successfully!");
-      navigate("/success");
-    } catch (error) {
-      console.error("Error during the API call:", error);
-      toast.error("Failed to place order");
-    }
-  };
+  // const handlePlaceOrder = async () => {
+  //   if (selectedAddressIndex === null) {
+  //     toast.error("Please select an address");
+  //     return;
+  //   }
+  //   if (cartItems.length === 0) {
+  //     toast.error("Cart is empty!");
+  //     return;
+  //   }
+  //   const selectedAddress = addressList[selectedAddressIndex];
+  //   const newOrder = {
+  //     uId: 1,
+  //     addressId: selectedAddress.id,
+  //   };
+  //   try {
+  //     await axios.post(
+  //       "https://localhost:7076/api/OrdersControllers",
+  //       newOrder
+  //     );
+  //     toast.success("Order placed successfully!");
+  //     navigate("/success");
+  //   } catch (error) {
+  //     console.error("Error during the API call:", error);
+  //     toast.error("Failed to place order");
+  //   }
+  // };
 
   return (
     <div className="p-8">
@@ -668,12 +668,12 @@ function Address() {
           </div>
         )}
 
-        <button
+        {/* <button
           onClick={handlePlaceOrder}
           className="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition"
         >
           Place Order
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Loginenewpage from "./components/Loginenewpage";
 import Address from "./pages/Address";
 import OrderDetails from "./pages/OrderDetails";
-
+import ConfirmOrderPage from "./pages/ConfirmOrderPage";
 
 function App() {
   return (
@@ -22,8 +22,8 @@ function App() {
             path="/success"
             element={<ProtectedRoute element={<Success />} />}
           />
-          {/* <Route path="/orderdetails" element={<OrderDetails/>} /> */}
-          <Route path="/order-details/:id" element={<OrderDetails />} />
+          <Route path="/orderdetails/:id" element={<OrderDetails />} />
+          <Route path="/confirmorderpage" element={<ConfirmOrderPage/> } />
 
           <Route path="/loginenewpage" element={<Loginenewpage />} />
           <Route path="/address" element={<Address />} />
