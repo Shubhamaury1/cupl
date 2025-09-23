@@ -97,15 +97,6 @@ function ItemCart({ id, name, price, img, PQunatity }) {
   return (
     <>
       <div className="flex gap-2 shadow-md rounded-lg p-2 mb-3 dark:shadow-green-500">
-        {/* <MdDelete
-          onClick={() => {
-            dispatch(removeFromCart({ id, name, price, img, PQunatity }));
-            toast(`${name} removed! your Cart`, {
-              icon: "👋",
-            });
-          }}
-          className="absolute right-7 text-gray-600 cursor-pointer dark:text-red-500"
-        /> */}
         <MdDelete
           onClick={DeleteToCartItem}
           className="absolute right-7 text-gray-600 cursor-pointer dark:text-red-500"
@@ -119,14 +110,6 @@ function ItemCart({ id, name, price, img, PQunatity }) {
           <div className="flex justify-between">
             <span className="text-green-500 font-bold ">₹{price}</span>
             <div className="flex justify-center item-center gap-2 absolute right-7">
-              {/* <FaMinus
-                onClick={() =>
-                  PQunatity > 1
-                    ? dispatch(decrementQty({ id }))
-                    : (PQunatity = 0)
-                }
-                className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer"
-              /> */}
               <FaMinus
                 onClick={handleDecrement}
                 className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer "
@@ -134,10 +117,6 @@ function ItemCart({ id, name, price, img, PQunatity }) {
               <span className="dark:text-green-500 text-gray-900">
                 {Number(PQunatity) || 1}
               </span>
-              {/* <FaPlus
-                onClick={() => dispatch(incrementQty({ id }))}
-                className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer "
-              /> */}
               <FaPlus
                 onClick={handleIncrement}
                 className="border-2 border-gray-600 text-gray-600 hover:text-white hover:bg-green-500 hover:border-none rounded-md p-1 text-xl transition-all ease-linear cursor-pointer "

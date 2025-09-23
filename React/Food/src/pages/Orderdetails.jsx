@@ -17,6 +17,7 @@ function OrderDetails() {
           `https://localhost:7076/api/OrdersControllers/${id}`
         );
         if (response.status === 200) {
+          //console.log("tracker", response.data);
           setOrder(response.data);
         } else {
           console.log("Failed to fetch order details.");
@@ -31,7 +32,6 @@ function OrderDetails() {
   if (!order) {
     return <p className="p-8 text-gray-700">No order details available.</p>;
   }
-
   // Parse the address string into separate components
   const addressFields = order.address.split(",").reduce((acc, field) => {
     const [key, value] = field.split(":").map((item) => item.trim());
@@ -41,14 +41,13 @@ function OrderDetails() {
     return acc;
   }, {});
 
-  // Check if the trackers array has any elements
   const tracker =
     order.trackers && order.trackers.length > 0
-      ? order.trackers[0]
-      : { Status: "Pending", Date: "20-09-2025" };
+      ? order.trackers[order.trackers.length - 1]
+      : { status: "Pending", date: "20-09-2025" };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 text-gray-800">
+    <div className="max-w-4xl mx-auto p-6 text-gray-800 h-screen">
       <h1 className="text-3xl font-bold mb-6 border-b pb-2 dark:text-green-500">
         Order Details
       </h1>

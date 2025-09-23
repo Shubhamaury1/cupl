@@ -8,7 +8,6 @@ function Loginenewpage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("orderHistory"); // or 'address'
   const navigate = useNavigate();
-
   const [loginData, setLoginData] = useState({ username: "", password: "" });
   const [registerData, setRegisterData] = useState({
     username: "",
@@ -23,45 +22,50 @@ function Loginenewpage() {
       setCurrentPage("home");
     }
   }, []);
-
-  const handleLogin = (e) => {
+  // Handle Login From Backend
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find(
-      (u) =>
-        u.username === loginData.username && u.password === loginData.password
-    );
-    if (user) {
-      setIsLoggedIn(true);
-      setCurrentPage("home");
-      localStorage.setItem("isLoggedIn", "true");
-      toast.success("Login successful!");
-    } else {
+    try {
+      const response = await axios.post(
+        "https://localhost:7076/api/Authentication/Login",
+        {
+          name: loginData.username,
+          password: loginData.password,
+        }
+      );
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+        setCurrentPage("home");
+        localStorage.setItem("isLoggedIn", "true");
+        toast.success("Login successful!");
+      }
+    } catch (error) {
       toast.error("Invalid credentials! Please register.");
       setCurrentPage("register");
     }
   };
-
-  const handleRegister = (e) => {
+  // Handle Registration From Backend
+  const handleRegister = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const userExists = users.some(
-      (user) => user.username === registerData.username
-    );
-    if (userExists) {
-      toast.error("Username already exists!");
-      return;
+    try {
+      const response = await axios.post(
+        "https://localhost:7076/api/Authentication/Registration",
+        {
+          name: registerData.username,
+          email: registerData.email,
+          password: registerData.password,
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Registered successfully!");
+        setIsLoggedIn(true);
+        localStorage.setItem("isLoggedIn", "true");
+        setCurrentPage("home");
+      }
+    } catch (error) {
+      toast.error(error.response.data || "Something went wrong!");
     }
-    // Add new user
-    users.push(registerData);
-    localStorage.setItem("users", JSON.stringify(users));
-
-    toast.success("Registered successfully!");
-    setIsLoggedIn(true);
-    localStorage.setItem("isLoggedIn", "true");
-    setCurrentPage("home");
   };
-
   // Logout
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -225,16 +229,9 @@ function Loginenewpage() {
     fetchOrder();
   }, []);
 
-  // Check if the trackers array has any elements
- const tracker =
-   orders.trackers && orders.trackers.length > 0
-     ? orders.trackers[0]
-     : { Status: "Pending", Date: "20-09-2025" };
-  
-  
   const renderOrderHistory = () => {
     return (
-      <div className="p-8 text-gray-800 dark:bg-gray-800">
+      <div className="p-8 text-gray-800 dark:bg-gray-800 h-screen">
         <h1 className="text-2xl font-bold mb-6 dark:text-green-500">
           Order History
         </h1>
@@ -242,98 +239,60 @@ function Loginenewpage() {
         {orders.length === 0 ? (
           <p>No orders found.</p>
         ) : (
-          orders.map((order) => (
-            // <div key={order.id} className="mb-8">
-            //   <div className="space-y-4">
-            //     {/* Since each order is a single item, we don't need to map over order.items */}
-            //     <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center dark:bg-blue-100">
-            //       <div>
-            //         <p className="text-lg font-semibold text-gray-900 dark:text-blue-600">
-            //           {order.productName}
-            //         </p>
+          orders.map((order) => {
+            // Get the latest trackerof the order
+            const latestTracker =
+              order.trackers && order.trackers.length > 0
+                ? order.trackers[order.trackers.length - 1]
+                : { status: "Pending", date: "20-09-2025" };
 
-            //         <p className="text-lg font-semibold text-gray-900 dark:text-blue-600">
-            //           <img
-            //             src={order.imageUrl}
-            //             alt={order.productName}
-            //             className="w-32 h-32 object-cover rounded-lg"
-            //           />
+            return (
+              <div key={order.id} className="mb-8">
+                <div className="space-y-4">
+                  <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
+                    {/* Left Image */}
+                    <div className="mb-4 sm:mb-0 flex justify-center sm:justify-start">
+                      <img
+                        src={order.imageUrl}
+                        alt={order.productName}
+                        className="w-32 h-32 object-cover rounded-lg"
+                      />
+                    </div>
 
-            //         </p>
+                    {/* Middle Product Information */}
+                    <div className="flex flex-col sm:flex-1 justify-center items-center sm:items-start pl-4 sm:pl-6">
+                      <p className="text-lg font-semibold text-gray-900 dark:text-blue-600 text-center sm:text-left">
+                        {order.productName}
+                      </p>
+                      <p className="text-sm text-gray-700 font-medium dark:text-green-600">
+                        Ordered on: {latestTracker.date}
+                      </p>
+                    </div>
 
-            //         <p className="text-sm text-gray-600 dark:text-green-600">
-            //           Ordered on: {tracker.Date}
-            //         </p>
-            //       </div>
-            //       <div className="flex flex-col mt-2 sm:mt-0">
-            //         <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
-            //           Ordered: Confirm
-            //         </span>
-            //         <button
-            //           onClick={() => navigate(`/orderdetails/${order.id}`)}
-            //           className="text-blue-600 hover:underline text-sm mt-2 dark:text-green-500"
-            //         >
-            //           View Details
-            //         </button>
-            //       </div>
-            //     </div>
-            //   </div>
-            // </div>
+                    {/* Right Button */}
+                    <div className="flex flex-col justify-between items-center sm:items-end pl-4 sm:pl-6 mt-4 sm:mt-0">
+                      <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
+                        Order: Confirm
+                      </span>
 
-            <div key={order.id} className="mb-8">
-              <div className="space-y-4">
-                {/* Order Item Card */}
-                <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
-                  {/* Left side: Image */}
-                  <div className="mb-4 sm:mb-0 flex  justify-center sm:justify-start">
-                    <img
-                      src={order.imageUrl}
-                      alt={order.productName}
-                      className="w-32 h-32 object-cover rounded-lg"
-                    />
-                    {/* <p className="text-sm text-gray-700 font-medium dark:text-green-600">
-                      Ordered on: {tracker.Date}
-                    </p> */}
-                  </div>
-
-                  {/* Middle: Product name */}
-                  <div className="flex flex-col sm:flex-1 justify-center items-center sm:items-start pl-4 sm:pl-6">
-                    <p className="text-lg font-semibold text-gray-900 dark:text-blue-600 text-center sm:text-left">
-                      {order.productName}
-                    </p>
-
-                    {/* Ordered on date */}
-                    <p className="text-sm text-gray-700 font-medium dark:text-green-600">
-                      Ordered on: {tracker.Date}
-                    </p>
-                  </div>
-
-                  {/* Right side: Status and View Details */}
-                  <div className="flex flex-col justify-between items-center sm:items-end pl-4 sm:pl-6 mt-4 sm:mt-0">
-                    {/* Ordered Status */}
-                    <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
-                      Ordered: Confirm
-                    </span>
-
-                    {/* View Details Button */}
-                    <div className="mt-2">
-                      <button
-                        onClick={() => navigate(`/orderdetails/${order.id}`)}
-                        className="text-blue-600 hover:underline text-sm dark:text-green-500"
-                      >
-                        View Details
-                      </button>
+                      <div className="mt-2">
+                        <button
+                          onClick={() => navigate(`/orderdetails/${order.id}`)}
+                          className="text-blue-600 hover:underline text-sm dark:text-green-500"
+                        >
+                          View Details
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     );
   };
-
   const renderHome = () => (
     <div className="flex min-h-screen">
       {renderSidebar()}
