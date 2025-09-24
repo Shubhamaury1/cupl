@@ -231,7 +231,7 @@ function Loginenewpage() {
 
   const renderOrderHistory = () => {
     return (
-      <div className="p-8 text-gray-800 dark:bg-gray-800 h-screen">
+      <div className="p-8 text-gray-800 dark:bg-gray-800">
         <h1 className="text-2xl font-bold mb-6 dark:text-green-500">
           Order History
         </h1>
@@ -247,7 +247,7 @@ function Loginenewpage() {
                 : { status: "Pending", date: "20-09-2025" };
 
             return (
-              <div key={order.id} className="mb-8">
+              <div key={order.id} className="mb-8 ">
                 <div className="space-y-4">
                   <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
                     {/* Left Image */}

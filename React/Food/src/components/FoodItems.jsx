@@ -1,60 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import FoodCard from "./FoodCard";
-// import { useSelector } from "react-redux";
-// import toast, { Toaster } from "react-hot-toast";
-// import axios from "axios";
-// function FoodItems() {
-//   const [foods, setFoods] = useState([]);
-//   const selectedCategory = useSelector((state) => state.category.category);
-//   const search = useSelector((state) => state.search.search);
-//  const loggedInUserId = 1;
-//   useEffect(() => {
-//     axios
-//       .get("https://localhost:7076/api/FileUpload/all")
-//       .then((res) => setFoods(res.data))
-//       .catch((err) => console.error("Error fetching food items:", err));
-//   }, []);
-
-//   const addhandleToast = (name) => toast.success(`Added ${name} to cart`);
-
-//   //Apply both Category and Search filter
-//   const filteredFoods = foods.filter((food) => {
-//     const matchCategory =
-//       selectedCategory === "All" || food.category === selectedCategory;
-//     const matchSearch = food.name.toLowerCase().includes(search.toLowerCase());
-//     return matchCategory && matchSearch;
-//   });
-
-//   return (
-//     <>
-//       <Toaster position="top-center" reverseOrder={false} />
-//       <div className="flex flex-wrap gap-12 justify-center lg:justify-start mx-10 my-10">
-//         {filteredFoods.length > 0 ? (
-//           filteredFoods.map((item) => (
-//             <FoodCard
-//               key={item.id}
-//               id={item.id}
-//               name={item.name}
-//               price={item.price}
-//               desc={item.description}
-//               rating={item.rating}
-//               img={item.imageUrl}
-//               handleToast={addhandleToast}
-//               userId={loggedInUserId}
-//             />
-//           ))
-//         ) : (
-//           <p className="text-gray-600 text-lg">No food items found.</p>
-//         )}
-//       </div>
-//     </>
-//   );
-// }
-
-// export default FoodItems;
-
-
-
 import React, { useEffect, useState } from "react";
 import FoodCard from "./FoodCard";
 import { useSelector } from "react-redux";
@@ -62,42 +5,39 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 function FoodItems() {
-  const [foods, setFoods] = useState([]); // array of current page items
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
+  const [foods, setFoods] = useState([]);
   const selectedCategory = useSelector((state) => state.category.category);
   const search = useSelector((state) => state.search.search);
   const loggedInUserId = 1;
 
-  // Pagination state
+// start 
+  //Pagination Logic for frontend
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 6; // it can only changed according to frontend
 
-  // Fetch foods from backend for current page
   useEffect(() => {
-    axios
-      .get(
-        `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
-      )
-      .then((res) => {
-        const data = res.data;
-        setFoods(data.items || []);
-        setTotalPages(data.totalPages);
-        setTotalItems(data.totalItems);
-      })
-      .catch((err) => console.error("Error fetching food items:", err));
-  }, [currentPage]);
-
-  const addhandleToast = (name) => toast.success(`Added ${name} to cart`);
-
-  // Filter foods locally based on category and search (optional)
-  // You can also push filtering to backend for better performance if dataset is big
-  const filteredFoods = foods.filter((food) => {
-    const matchCategory =
-      selectedCategory === "All" || food.category === selectedCategory;
-    const matchSearch = food.name.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
+        );
+        if (response.status === 200) {
+          console.log("received data are", response.data);
+          const data = response.data;
+          setFoods(data.items || []);
+          setTotalPages(data.totalPages);
+          setTotalItems(data.totalItems);
+        } else {
+          console.log("Data does not received");
+        }
+      } catch (error) {
+        console.error("Error fetching food items:", error);
+      }
+    };
+    fetchData();
+  }, [currentPage, itemsPerPage]);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -110,7 +50,7 @@ function FoodItems() {
     const pages = [];
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
-
+    // Manage button 
     if (endPage - startPage < 4) {
       if (startPage === 1) {
         endPage = Math.min(totalPages, startPage + 4);
@@ -126,8 +66,8 @@ function FoodItems() {
           onClick={() => handlePageChange(i)}
           className={`px-3 py-1 mx-1 rounded ${
             currentPage === i
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 hover:bg-gray-300"
+              ? "bg-gray-600 text-white dark:bg-orange-400 dark:font-bold"
+              : "bg-gray-400 hover:bg-gray-300 dark:bg-orange-300 "
           }`}
         >
           {i}
@@ -136,6 +76,18 @@ function FoodItems() {
     }
     return pages;
   };
+  // end paginations
+
+
+  const addhandleToast = (name) => toast.success(`Added ${name} to cart`);
+
+  //Apply both Category and Search filter
+  const filteredFoods = foods.filter((food) => {
+    const matchCategory =
+      selectedCategory === "All" || food.category === selectedCategory;
+    const matchSearch = food.name.toLowerCase().includes(search.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
   return (
     <>
@@ -166,7 +118,7 @@ function FoodItems() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 mx-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-orange-400 "
           >
             Previous
           </button>
@@ -176,7 +128,7 @@ function FoodItems() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 mx-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-orange-400"
           >
             Next
           </button>
@@ -187,4 +139,5 @@ function FoodItems() {
 }
 
 export default FoodItems;
+
 
