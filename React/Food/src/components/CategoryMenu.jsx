@@ -11,7 +11,7 @@ function CategoryMenu() {
       ...new Set(FoodData.map((food) => food.category)),
     ];
     setCategories(uniqueCategories);
-    console.log(uniqueCategories);
+    //console.log(uniqueCategories);
   };
 
   useEffect(() => {

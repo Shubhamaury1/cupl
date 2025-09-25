@@ -24,7 +24,7 @@ function FoodItems() {
           `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
         );
         if (response.status === 200) {
-          console.log("received data are", response.data);
+          //console.log("received data are", response.data);
           const data = response.data;
           setFoods(data.items || []);
           setTotalPages(data.totalPages);
