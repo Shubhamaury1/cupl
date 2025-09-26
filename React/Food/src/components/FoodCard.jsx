@@ -6,17 +6,18 @@ import { addToCart } from "../redux/slices/CartSlice"; // Assuming you have Redu
 
 function FoodCard({ id, name, price, img, rating, userId, desc, handleToast }) {
   const dispatch = useDispatch();
+  const userid=localStorage.getItem("userid")
   const qty = 1;
   // Function to handle Add to Cart
   const handleAddToCart = async () => {
     const cartItem = {
       id,
-      PId:id,
+      PId: id,
       name,
       price,
       img,
       rating,
-      UId: userId,
+      UId: userid,
       PQunatity: qty,
     };
     try {

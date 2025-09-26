@@ -22,6 +22,7 @@ function Loginenewpage() {
       setCurrentPage("home");
     }
   }, []);
+
   // Handle Login From Backend
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,6 +35,8 @@ function Loginenewpage() {
         }
       );
       if (response.status === 200) {
+        //console.log(response.data)
+        localStorage.setItem("userid",response.data)
         setIsLoggedIn(true);
         setCurrentPage("home");
         localStorage.setItem("isLoggedIn", "true");
@@ -44,6 +47,7 @@ function Loginenewpage() {
       setCurrentPage("register");
     }
   };
+
   // Handle Registration From Backend
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -57,20 +61,24 @@ function Loginenewpage() {
         }
       );
       if (response.status === 200) {
+        //console.log(response.data);
         toast.success("Registered successfully!");
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
+         localStorage.setItem("userid", response.data);
         setCurrentPage("home");
       }
     } catch (error) {
       toast.error(error.response.data || "Something went wrong!");
     }
   };
+  
   // Logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentPage("home");
     localStorage.removeItem("isLoggedIn"); //Clear login
+    localStorage.removeItem("userid")
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
@@ -216,9 +224,10 @@ function Loginenewpage() {
   const [orders, setOrders] = useState([]);
   useEffect(() => {
     const fetchOrder = async () => {
+      const userid = localStorage.getItem("userid");
       try {
         const response = await axios.get(
-          "https://localhost:7076/api/OrdersControllers"
+          `https://localhost:7076/api/OrdersControllers/${userid}`
         );
         //console.log("Fetched Orders:", response.data);
         setOrders(response.data);

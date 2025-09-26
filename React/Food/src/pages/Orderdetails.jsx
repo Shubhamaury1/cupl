@@ -14,7 +14,7 @@ function OrderDetails() {
     const fetchOrderDetails = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7076/api/OrdersControllers/${id}`
+          `https://localhost:7076/api/OrdersControllers/order/${id}`
         );
         if (response.status === 200) {
           //console.log("tracker", response.data);

@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import PaymentMethod from "../components/PaymentMethod";
 
+
 function ConfirmOrderPage() {
   const [address, setAddress] = useState([]); // Address list fetched from API
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null); // Index of the selected address
@@ -14,6 +15,7 @@ function ConfirmOrderPage() {
 
   // Fetching address data from API
   useEffect(() => {
+
     const fetchAddress = async () => {
       try {
         const response = await axios.get(
@@ -46,19 +48,16 @@ function ConfirmOrderPage() {
     }
     
     // check COD then order placed
-    if (paymentMethod === "cashOnDelivery") {
+    if (paymentMethod != "cashOnDelivery") {
       toast.success("please select address than placed order");
-    } else {
-      toast.error("This payment method is not work Please select COD");
-      return
     }
 
     // Get the selected address from the array
     const selectedAddress = address[selectedAddressIndex];
-
+const userid = localStorage.getItem("userid");
     // Prepare the order data
     const newOrder = {
-      uId: 1, // Replace with actual user ID if needed
+      uId: userid, // Replace with actual user ID if needed
       addressId: selectedAddress.id,
       paymentMethod,
     };
