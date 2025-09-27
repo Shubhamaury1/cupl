@@ -91,14 +91,14 @@ function OrderDetails() {
             <strong>Name:</strong> {addressFields["Name"]}
           </p>
           <p>
-            <strong>Phone:</strong> {addressFields["Phone Number"]}
+            <strong>Phone:</strong> {addressFields["Phone"]}
           </p>
           <p>
-            <strong>Address Type:</strong> {addressFields["Address Type"]},{""}
+            <strong>Address Type:</strong> {addressFields["Type"]},{""}
           </p>
           <p>
-            <strong>Address:</strong> {addressFields["Building Number"]},{" "}
-            {addressFields["Near"]}, {addressFields["Locality"]},{" "}
+            <strong>Address:</strong> {addressFields["House No"]},{" "}
+            {addressFields["Landmark"]},{" "}
             {addressFields["City"]}, {addressFields["Region"]}-
             {addressFields["PinCode"]}
           </p>

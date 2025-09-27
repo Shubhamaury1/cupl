@@ -21,10 +21,27 @@ function FoodItems() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
+          // `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
+          `https://localhost:7076/api/FileUpload/all`,
+          {
+            params: {
+              pageNumber: currentPage,
+              pageSize: itemsPerPage,
+              searchTerm: search,
+              category: selectedCategory === "All" ? null : selectedCategory,
+            },
+          }
         );
         if (response.status === 200) {
           //console.log("received data are", response.data);
+          // console.log("Params being sent to API", {
+          //   currentPage,
+          //   itemsPerPage,
+          //   search,
+          //   selectedCategory,
+          // });
+         
+
           const data = response.data;
           setFoods(data.items || []);
           setTotalPages(data.totalPages);
@@ -37,7 +54,7 @@ function FoodItems() {
       }
     };
     fetchData();
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, search, selectedCategory]);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -82,19 +99,19 @@ function FoodItems() {
   const addhandleToast = (name) => toast.success(`Added ${name} to cart`);
 
   //Apply both Category and Search filter
-  const filteredFoods = foods.filter((food) => {
-    const matchCategory =
-      selectedCategory === "All" || food.category === selectedCategory;
-    const matchSearch = food.name.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+  // const filteredFoods = foods.filter((food) => {
+  //   const matchCategory =
+  //     selectedCategory === "All" || food.category === selectedCategory;
+  //   const matchSearch = food.name.toLowerCase().includes(search.toLowerCase());
+  //   return matchCategory && matchSearch;
+  // });
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-wrap gap-12 justify-center lg:justify-start mx-10 my-10">
-        {filteredFoods.length > 0 ? (
-          filteredFoods.map((item) => (
+        {foods.length > 0 ? (
+          foods.map((item) => (
             <FoodCard
               key={item.id}
               id={item.id}

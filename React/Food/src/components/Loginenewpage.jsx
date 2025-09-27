@@ -35,8 +35,9 @@ function Loginenewpage() {
         }
       );
       if (response.status === 200) {
-        //console.log(response.data)
-        localStorage.setItem("userid",response.data)
+        console.log(response.data)
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userid", response.data.userId);
         setIsLoggedIn(true);
         setCurrentPage("home");
         localStorage.setItem("isLoggedIn", "true");
@@ -65,7 +66,7 @@ function Loginenewpage() {
         toast.success("Registered successfully!");
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
-         localStorage.setItem("userid", response.data);
+         //localStorage.setItem("userid", response.data.userId);
         setCurrentPage("home");
       }
     } catch (error) {
@@ -78,7 +79,8 @@ function Loginenewpage() {
     setIsLoggedIn(false);
     setCurrentPage("home");
     localStorage.removeItem("isLoggedIn"); //Clear login
-    localStorage.removeItem("userid")
+    localStorage.removeItem("userid");
+    localStorage.removeItem("token");//remove Token
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
@@ -225,9 +227,15 @@ function Loginenewpage() {
   useEffect(() => {
     const fetchOrder = async () => {
       const userid = localStorage.getItem("userid");
+      const token= localStorage.getItem("token")
       try {
         const response = await axios.get(
-          `https://localhost:7076/api/OrdersControllers/${userid}`
+          `https://localhost:7076/api/OrdersControllers/${userid}`,
+          {
+            headers: {
+              Authorization:`Bearer${token}`
+            }
+          }
         );
         //console.log("Fetched Orders:", response.data);
         setOrders(response.data);
