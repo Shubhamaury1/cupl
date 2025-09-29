@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 import {
   removeFromCart,
   incrementQty,
@@ -23,7 +24,7 @@ function ItemCart({ id, name, price, img, PQunatity }) {
     };
     try {
       const response = await axios.delete(
-        `https://localhost:7076/api/Carts/${id}`
+        `${APP_URL}/Carts/${id}`
       );
       //handleToast(name);
       if (response.status === 200) {
@@ -43,7 +44,7 @@ function ItemCart({ id, name, price, img, PQunatity }) {
   const handleIncrement = async () => {  
     try {
       const response = await axios.put(
-        `https://localhost:7076/api/Carts/${id},${PQunatity+1}`
+        `${APP_URL}/Carts/${id},${PQunatity + 1}`
       );
 
       if (response.status === 200) {
@@ -70,7 +71,7 @@ function ItemCart({ id, name, price, img, PQunatity }) {
   const handleDecrement = async () => {
     try {
       const response = await axios.put(
-        `https://localhost:7076/api/Carts/${id},${PQunatity - 1}`
+        `${APP_URL}/Carts/${id},${PQunatity - 1}`
       );
 
       if (response.status === 200) {

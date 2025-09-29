@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function Loginenewpage() {
   const [currentPage, setCurrentPage] = useState("welcome"); // welcome, login, register, home
@@ -27,15 +28,12 @@ function Loginenewpage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "https://localhost:7076/api/Authentication/Login",
-        {
-          name: loginData.username,
-          password: loginData.password,
-        }
-      );
+      const response = await axios.post(`${APP_URL}/Authentication/Login`, {
+        name: loginData.username,
+        password: loginData.password,
+      });
       if (response.status === 200) {
-        console.log(response.data)
+        //console.log(response.data);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userid", response.data.userId);
         setIsLoggedIn(true);
@@ -54,7 +52,7 @@ function Loginenewpage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://localhost:7076/api/Authentication/Registration",
+        `${APP_URL}/Authentication/Registration`,
         {
           name: registerData.username,
           email: registerData.email,
@@ -66,21 +64,23 @@ function Loginenewpage() {
         toast.success("Registered successfully!");
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
-         //localStorage.setItem("userid", response.data.userId);
+        //localStorage.setItem("userid", response.data.userId);
         setCurrentPage("home");
       }
     } catch (error) {
       toast.error(error.response.data || "Something went wrong!");
     }
   };
-  
+
   // Logout
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setCurrentPage("home");
+    //setCurrentPage("home");
+    navigate("/")
+    toast.success("Your are Loggout Successfully")
     localStorage.removeItem("isLoggedIn"); //Clear login
     localStorage.removeItem("userid");
-    localStorage.removeItem("token");//remove Token
+    localStorage.removeItem("token"); //remove Token
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
@@ -224,17 +224,31 @@ function Loginenewpage() {
   );
   // from the backend
   const [orders, setOrders] = useState([]);
+  const loginWarningShownRef = useRef(false); // check login current or not in home page
   useEffect(() => {
     const fetchOrder = async () => {
       const userid = localStorage.getItem("userid");
-      const token= localStorage.getItem("token")
+      const token = localStorage.getItem("token");
+
+      if (!userid || !token) {
+        // Show warning only once using ref
+        if (!loginWarningShownRef.current) {
+          toast("You are not logged in. Please log in first.", {
+            icon: "⚠️",
+            duration: 4000,
+          });
+          loginWarningShownRef.current = true; // 👈 Prevent repeat
+        }
+        return;
+      }
+
       try {
         const response = await axios.get(
-          `https://localhost:7076/api/OrdersControllers/${userid}`,
+          `${APP_URL}/OrdersControllers/${userid}`,
           {
             headers: {
-              Authorization:`Bearer${token}`
-            }
+              Authorization: `Bearer${token}`,
+            },
           }
         );
         //console.log("Fetched Orders:", response.data);
@@ -244,7 +258,7 @@ function Loginenewpage() {
       }
     };
     fetchOrder();
-  }, []);
+  }, [isLoggedIn]);
 
   const renderOrderHistory = () => {
     return (
@@ -282,7 +296,7 @@ function Loginenewpage() {
                         {order.productName}
                       </p>
                       <p className="text-sm text-gray-700 font-medium dark:text-green-600">
-                        Ordered on: {latestTracker.date}
+                        Ordered on: {order.orderDate}
                       </p>
                     </div>
 

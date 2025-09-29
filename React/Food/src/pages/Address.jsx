@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+const APP_URL=import.meta.env.VITE_LOCAL_URL;
 import axios from "axios";
 
 function Address() {
+ 
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
@@ -28,7 +30,8 @@ function Address() {
     const fetchAddresses = async () => {
       try {
         const response = await axios.get(
-          "https://localhost:7076/api/Addresses"
+          // "https://localhost:7076/api/Addresses"
+          `${APP_URL}/Addresses`
         );
         const data = response.data;
 
@@ -53,7 +56,7 @@ function Address() {
     };
 
     fetchAddresses();
-  }, []);
+  }, [addressList]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,10 +77,11 @@ function Address() {
     setIsEditing(false);
     setEditIndex(null);
   };
-
+  const userid = localStorage.getItem("userid");  
   const mapToApiAddress = (addr, id = null) => ({
     ...(id !== null && { id }),
-    uid: 1, // Replace with dynamic user ID if needed
+    
+    uid: userid, // Replace with dynamic user ID if needed
     addressType: addr.addresstype,
     userName: addr.userName,
     houseNumber: addr.house,
@@ -106,16 +110,17 @@ function Address() {
     try {
       if (isEditing && editIndex !== null) {
         const idToUpdate = addressList[editIndex].id;
-
+        console.log("Hello");
         const response = await axios.put(
-          `https://localhost:7076/api/Addresses/${idToUpdate}`,
+          `${APP_URL}/Addresses/${idToUpdate}`,
           mapToApiAddress(saveaddress, idToUpdate)
         );
-
+        
         const updatedAddress = {
           ...saveaddress,
           id: response.data.id,
         };
+        
 
         const updatedList = [...addressList];
         updatedList[editIndex] = updatedAddress;
@@ -123,7 +128,7 @@ function Address() {
         toast.success("Address updated!");
       } else {
         const response = await axios.post(
-          "https://localhost:7076/api/Addresses",
+           `${APP_URL}/Addresses`,
           mapToApiAddress(saveaddress)
         );
 
@@ -155,7 +160,7 @@ function Address() {
     const idToDelete = addressList[index].id;
 
     try {
-      await axios.delete(`https://localhost:7076/api/Addresses/${idToDelete}`);
+      await axios.delete(`${APP_URL}/Addresses/${idToDelete}`);
       const updatedList = addressList.filter((_, i) => i !== index);
       setAddressList(updatedList);
       toast.success("Address deleted!");

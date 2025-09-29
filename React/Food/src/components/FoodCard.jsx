@@ -3,7 +3,7 @@ import { FaStar } from "react-icons/fa";
 import axios from "axios"; // Import Axios
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/CartSlice"; // Assuming you have Redux set up for cart management
-
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 function FoodCard({ id, name, price, img, rating, userId, desc, handleToast }) {
   const dispatch = useDispatch();
   const userid=localStorage.getItem("userid")
@@ -22,7 +22,7 @@ function FoodCard({ id, name, price, img, rating, userId, desc, handleToast }) {
     };
     try {
       dispatch(addToCart(cartItem));
-      await axios.post("https://localhost:7076/api/Carts", cartItem);
+      await axios.post(`${APP_URL}/Carts`, cartItem);
       handleToast(name);
     } catch (error) {
       console.error("Error adding item to cart:", error);

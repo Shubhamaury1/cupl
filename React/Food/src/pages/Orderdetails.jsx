@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 import { useParams } from "react-router-dom";
 
 function OrderDetails() {
@@ -14,7 +15,7 @@ function OrderDetails() {
     const fetchOrderDetails = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7076/api/OrdersControllers/order/${id}`
+          `${APP_URL}/OrdersControllers/order/${id}`
         );
         if (response.status === 200) {
           //console.log("tracker", response.data);
@@ -65,7 +66,11 @@ function OrderDetails() {
             </p>
             <p>
               <strong className="dark:text-pink-200">Order Placed:</strong>{" "}
-              <span className="dark:text-white">{tracker.date}</span>
+              <span className="dark:text-white">{order.orderDate}</span>
+            </p>
+            <p>
+              <strong className="dark:text-pink-200">Payment Method:</strong>{" "}
+              <span className="dark:text-white"> Cash On Delivery</span>
             </p>
           </div>
           <div>
@@ -98,9 +103,8 @@ function OrderDetails() {
           </p>
           <p>
             <strong>Address:</strong> {addressFields["House No"]},{" "}
-            {addressFields["Landmark"]},{" "}
-            {addressFields["City"]}, {addressFields["Region"]}-
-            {addressFields["PinCode"]}
+            {addressFields["Landmark"]}, {addressFields["City"]},{" "}
+            {addressFields["Region"]}-{addressFields["PinCode"]}
           </p>
         </div>
       </section>
@@ -134,7 +138,6 @@ function OrderDetails() {
                 <span className="dark:font-bold">Price:</span> ₹
                 {order.productPrice}
               </p>
-            
             </div>
           </div>
         </div>

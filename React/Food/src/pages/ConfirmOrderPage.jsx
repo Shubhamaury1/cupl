@@ -3,6 +3,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import PaymentMethod from "../components/PaymentMethod";
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 
 function ConfirmOrderPage() {
@@ -19,7 +20,7 @@ function ConfirmOrderPage() {
     const fetchAddress = async () => {
       try {
         const response = await axios.get(
-          "https://localhost:7076/api/Addresses"
+          `${APP_URL}/Addresses`
         );
         setAddress(response.data); // Store the fetched address list
       } catch (error) {
@@ -64,10 +65,7 @@ const userid = localStorage.getItem("userid");
 
     // Make API call to place the order
     try {
-      await axios.post(
-        "https://localhost:7076/api/OrdersControllers",
-        newOrder
-      );
+      await axios.post(`${APP_URL}/OrdersControllers`, newOrder);
       toast.success("Order placed successfully!");
       navigate("/success"); // Redirect to a success page
     } catch (error) {

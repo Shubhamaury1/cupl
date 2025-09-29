@@ -3,6 +3,7 @@ import FoodCard from "./FoodCard";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function FoodItems() {
   const [foods, setFoods] = useState([]);
@@ -22,7 +23,7 @@ function FoodItems() {
       try {
         const response = await axios.get(
           // `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
-          `https://localhost:7076/api/FileUpload/all`,
+          `${APP_URL}/FileUpload/all`,
           {
             params: {
               pageNumber: currentPage,
@@ -97,15 +98,6 @@ function FoodItems() {
 
 
   const addhandleToast = (name) => toast.success(`Added ${name} to cart`);
-
-  //Apply both Category and Search filter
-  // const filteredFoods = foods.filter((food) => {
-  //   const matchCategory =
-  //     selectedCategory === "All" || food.category === selectedCategory;
-  //   const matchSearch = food.name.toLowerCase().includes(search.toLowerCase());
-  //   return matchCategory && matchSearch;
-  // });
-
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />

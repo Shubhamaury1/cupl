@@ -11,6 +11,7 @@ import Loginenewpage from "./components/Loginenewpage";
 import Address from "./pages/Address";
 import OrderDetails from "./pages/OrderDetails";
 import ConfirmOrderPage from "./pages/ConfirmOrderPage";
+import Admin from "./pages/Admin";
 
 function App() {
   return (
@@ -24,12 +25,12 @@ function App() {
           />
           <Route path="/orderdetails/:id" element={<OrderDetails />} />
           <Route path="/confirmorderpage" element={<ConfirmOrderPage/> } />
-
           <Route path="/loginenewpage" element={<Loginenewpage />} />
           <Route path="/address" element={<Address />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
+          <Route path="/admin" element={<Admin/> } />
 
           <Route path="*" element={<Error />} />
         </Routes>
