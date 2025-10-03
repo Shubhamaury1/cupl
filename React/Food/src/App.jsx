@@ -14,6 +14,7 @@ import ConfirmOrderPage from "./pages/ConfirmOrderPage";
 import Admin from "./pages/Admin";
 import OrderTrackerStatus from "./components/OrderTrackerStatus";
 import AdminOrderDashboard from "./components/AdminOrderDashboard";
+import AdminMainPanel from "./components/AdminMainPanel";
 
 function App() {
   return (
@@ -35,7 +36,14 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<Error />} />
           <Route path="/ordertrackerstatus" element={<OrderTrackerStatus />} />
-          <Route path="/adminorderdashboard" element={<AdminOrderDashboard/> } />
+          <Route
+            path="/adminorderdashboard"
+            element={<AdminOrderDashboard />}
+          />
+          <Route
+            path="/adminmainpanel"
+            element={<AdminMainPanel />}
+          />
         </Routes>
       </BrowserRouter>
     </>

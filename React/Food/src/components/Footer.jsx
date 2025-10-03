@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <>
       <div className="mt-20">
-        <hr/>
+        <hr />
         <footer className=" bg-gray-400 text-white dark:bg-orange-300">
           <section className="flex sm:flex-row lg:flex-row justify-center dark:font-bold">
             <NavLink to="/about" className=" p-4">
@@ -15,6 +15,9 @@ export default function Footer() {
             </NavLink>
             <NavLink to="/policy" className="p-4">
               Policy
+            </NavLink>
+            <NavLink to="/admin" className="p-4">
+              Admin
             </NavLink>
           </section>
 

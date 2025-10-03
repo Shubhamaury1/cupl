@@ -11,7 +11,7 @@ function AdminOrderDashboard() {
       try {
         //Fetch total order
         const response = await axios.get(`${APP_URL}/OrdersControllers`);
-        console.log("order history", response.data);
+       // console.log("order history", response.data);
         setOrders(response.data);
 
         // Fetch total users
@@ -29,6 +29,12 @@ function AdminOrderDashboard() {
   const pendingOrders = orders.filter(
     (o) => o.trackers[o.trackers.length - 1].status === "Pending"
   ).length;
+  const confirmOrders = orders.filter(
+    (o) => o.trackers[o.trackers.length - 1].status === "Confirm"
+  ).length;
+   const cancelOrders = orders.filter(
+     (o) => o.trackers[o.trackers.length - 1].status === "Cancel"
+   ).length;
   const dispatchedOrders = orders.filter(
     (o) => o.trackers[o.trackers.length - 1].status === "Dispatched"
   ).length;
@@ -38,28 +44,55 @@ function AdminOrderDashboard() {
   const deliveredOrders = orders.filter(
     (o) => o.trackers[o.trackers.length - 1].status === "Delivered"
   ).length;
+ 
   const totalRevenue = orders.reduce((acc, o) => acc + (o.totalPrice || 0), 0);
 
   const cardData = [
-    { title: "Total Orders", value: totalOrders, color: "bg-blue-500" },
-    { title: "Pending Orders", value: pendingOrders, color: "bg-yellow-500" },
+    {
+      title: "Total Orders",
+      value: totalOrders,
+      color: "bg-gradient-to-br from-blue-500 to-purple-400",
+    },
+    {
+      title: "Pending Orders",
+      value: pendingOrders,
+      color: "bg-gradient-to-br from-yellow-500 to-pink-500",
+    },
+    {
+      title: "Cancel Orders",
+      value: cancelOrders,
+      color: "bg-gradient-to-br from-red-700 to-orange-300",
+    },
+    {
+      title: "Confirm Orders",
+      value: confirmOrders,
+      color: "bg-gradient-to-br from-gray-700 to-pink-400",
+    },
     {
       title: "Dispatched Orders",
       value: dispatchedOrders,
-      color: "bg-purple-500",
+      color: "bg-gradient-to-br from-purple-500 to-orange-400",
     },
     {
       title: "Out for Delivery",
       value: outForDeliveryOrders,
-      color: "bg-orange-500",
+      color: "bg-gradient-to-br from-orange-700 to-pink-400",
     },
     {
       title: "Delivered Orders",
       value: deliveredOrders,
-      color: "bg-green-500",
+      color: "bg-gradient-to-br from-green-700 to-green-400",
     },
-    { title: "Total Users", value: totalUsers, color: "bg-pink-500" },
-    { title: "Total Revenue", value: `₹${totalRevenue}`, color: "bg-red-500" },
+    {
+      title: "Total Users",
+      value: totalUsers,
+      color: "bg-gradient-to-br from-pink-700 to-pink-400",
+    },
+    {
+      title: "Total Revenue",
+      value: `₹${totalRevenue}`,
+      color: "bg-gradient-to-br from-purple-500 to-pink-400",
+    },
   ];
 
   return (

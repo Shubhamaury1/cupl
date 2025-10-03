@@ -34,15 +34,6 @@ function FoodItems() {
           }
         );
         if (response.status === 200) {
-          //console.log("received data are", response.data);
-          // console.log("Params being sent to API", {
-          //   currentPage,
-          //   itemsPerPage,
-          //   search,
-          //   selectedCategory,
-          // });
-         
-
           const data = response.data;
           setFoods(data.items || []);
           setTotalPages(data.totalPages);
@@ -114,6 +105,7 @@ function FoodItems() {
               img={item.imageUrl}
               handleToast={addhandleToast}
               userId={loggedInUserId}
+              stock={item.totalProductQuantity}
             />
           ))
         ) : (

@@ -7,6 +7,8 @@ import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { setSearch } from "../redux/slices/SearchSlice";
 import OrderTrackerStatus from "../components/OrderTrackerStatus";
+import AdminOrderDashboard from "../components/AdminOrderDashboard";
+import AdminMainPanel from "../components/AdminMainPanel";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -77,10 +79,7 @@ function App() {
 // Admin Section
 const Admin = () => (
   <div className="text-gray-800">
-    <h1 className="text-3xl font-bold">Welcome, Admin!</h1>
-    <p className="mt-4 text-lg">
-      This is the admin dashboard. Manage everything here.
-    </p>
+    <AdminMainPanel></AdminMainPanel>
   </div>
 );
 
@@ -94,10 +93,7 @@ const OrderTracker = () => (
 // Dashboard Section
 const Dashboard = () => (
   <div className="text-gray-800">
-    <h1 className="text-3xl font-bold">Dashboard</h1>
-    <p className="mt-4 text-lg">
-      This is the dashboard overview. Manage your app here.
-    </p>
+    <AdminOrderDashboard></AdminOrderDashboard>
   </div>
 );
 
@@ -110,6 +106,7 @@ const FileUpload = () => {
     description: "",
     category: "",
     rating: "",
+    totalProductQuantity: "",
     file: null,
   });
   const [totalPages, setTotalPages] = useState(1);
@@ -151,6 +148,7 @@ const FileUpload = () => {
           },
         });
         if (response.status === 200) {
+          //console.log("fetch data", response.data);
           const data = response.data;
           setProducts(data.items || []);
           setTotalPages(data.totalPages);
@@ -168,7 +166,7 @@ const FileUpload = () => {
   const handlePageSizeChange = (e) => {
     const value = e.target.value;
     if (value === "All") {
-      setItemsPerPage(totalItems || 100);
+      setItemsPerPage(totalItems);
       setCurrentPage(1);
     } else {
       const newSize = parseInt(value, 10);
@@ -221,6 +219,7 @@ const FileUpload = () => {
     fd.append("price", formData.price);
     fd.append("description", formData.description);
     fd.append("category", formData.category);
+    fd.append("totalProductQuantity", formData.totalProductQuantity);
     fd.append("rating", formData.rating);
     if (formData.file) {
       fd.append("file", formData.file);
@@ -248,7 +247,10 @@ const FileUpload = () => {
           toast.success("Product updated successfully!");
         } else {
           // add new product
-          setProducts((prev) => [...prev, updatedProduct]);
+          //setProducts((prev) => [...prev, updatedProduct]);
+          
+          //show update product in top
+          setProducts((prev)=>[updatedProduct, ...prev])
           toast.success("Product added successfully!");
         }
 
@@ -260,6 +262,7 @@ const FileUpload = () => {
           description: "",
           category: "",
           rating: "",
+          totalProductQuantity: "",
           file: null,
         });
       } else {
@@ -287,6 +290,7 @@ const FileUpload = () => {
       description: product.description,
       category: product.category,
       rating: product.rating,
+      totalProductQuantity: product.totalProductQuantity,
       file: null, // You can't edit the file through the form, so leave it as null
     });
   };
@@ -325,6 +329,13 @@ const FileUpload = () => {
                 step: "0.1",
                 min: 0,
                 max: 5,
+              },
+              {
+                label: "TotalProductQuantity",
+                name: "totalProductQuantity",
+                type: "number",
+                required: true,
+                min: 0,
               },
             ].map((field) => (
               <div key={field.name}>
@@ -415,7 +426,6 @@ const FileUpload = () => {
                 </button>
               </form>
             </div>
-
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-left border border-gray-200">
                 <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
@@ -425,6 +435,7 @@ const FileUpload = () => {
                     <th className="py-3 px-4 border-b">Name</th>
                     <th className="py-3 px-4 border-b">Price</th>
                     <th className="py-3 px-4 border-b">Category</th>
+                    <th className="py-3 px-4 border-b">Total Quantity</th>
                     <th className="py-3 px-4 border-b">Rating</th>
                     <th className="py-3 px-4 border-b max-w-xs">Description</th>
                     <th className="py-3 px-4 border-b">Actions</th>
@@ -439,7 +450,7 @@ const FileUpload = () => {
 
                     return (
                       <tr
-                        key={product.id}
+                        key={product.id || idx}
                         className="hover:bg-gray-50 text-gray-800"
                       >
                         <td className="py-2 px-4 border-b text-gray-800">
@@ -472,6 +483,9 @@ const FileUpload = () => {
                           {product.category}
                         </td>
                         <td className="py-2 px-4 border-b text-gray-800">
+                          {product.totalProductQuantity}
+                        </td>
+                        <td className="py-2 px-4 border-b text-gray-800">
                           {product.rating ?? "N/A"}
                         </td>
                         <td className="py-2 px-4 border-b max-w-xs">
@@ -499,11 +513,11 @@ const FileUpload = () => {
                 </tbody>
               </table>
               {totalPages > 1 && (
-                <div className="flex justify-center items-center my-4">
+                <div className="flex flex-wrap justify-center items-center gap-4my-4">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-orange-400 "
+                    className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-orange-400 cursor-pointer"
                   >
                     Previous
                   </button>
@@ -539,13 +553,14 @@ const FileUpload = () => {
                       </select>
                     </div>
                   )}
+                  <label className="text-gray-800 ml-5">Total Items: {totalItems }</label>
                 </div>
               )}
             </div>
           </div>
         ) : (
           <p className="mt-8 text-center text-gray-600">
-            No products to display.
+            No product Found.
           </p>
         )}
         <Toaster />

@@ -47,15 +47,16 @@ function ConfirmOrderPage() {
       toast.error("Please select an address before placing the order.");
       return;
     }
-    
+
     // check COD then order placed
-    if (paymentMethod != "cashOnDelivery") {
-      toast.success("please select address than placed order");
+    if (paymentMethod !== "cashOnDelivery") {
+      toast.error("Please select Cash on Delivery.");
+      return;
     }
 
     // Get the selected address from the array
     const selectedAddress = address[selectedAddressIndex];
-const userid = localStorage.getItem("userid");
+    const userid = localStorage.getItem("userid");
     // Prepare the order data
     const newOrder = {
       uId: userid, // Replace with actual user ID if needed
