@@ -15,6 +15,7 @@ import Admin from "./pages/Admin";
 import OrderTrackerStatus from "./components/OrderTrackerStatus";
 import AdminOrderDashboard from "./components/AdminOrderDashboard";
 import AdminMainPanel from "./components/AdminMainPanel";
+import AdminOrUser from "./components/AdminOrUser";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
             path="/adminmainpanel"
             element={<AdminMainPanel />}
           />
+          <Route path="/adminoruser" element={<AdminOrUser/>} />
         </Routes>
       </BrowserRouter>
     </>

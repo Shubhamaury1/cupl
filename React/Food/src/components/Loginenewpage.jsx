@@ -36,6 +36,7 @@ function Loginenewpage() {
         //console.log(response.data);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userid", response.data.userId);
+        localStorage.setItem("isAdmin", response.data.isAdmin);
         setIsLoggedIn(true);
         setCurrentPage("home");
         localStorage.setItem("isLoggedIn", "true");
@@ -76,11 +77,12 @@ function Loginenewpage() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     //setCurrentPage("home");
-    navigate("/")
-    toast.success("Your are Loggout Successfully")
+    navigate("/");
+    toast.success("Your are Loggout Successfully");
     localStorage.removeItem("isLoggedIn"); //Clear login
     localStorage.removeItem("userid");
     localStorage.removeItem("token"); //remove Token
+    localStorage.removeItem("isAdmin"); // remove admin
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
@@ -189,7 +191,7 @@ function Loginenewpage() {
   );
 
   const renderSidebar = () => (
-    <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen">
+    <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen ">
       <Link to="/">
         <h2 className="text-xl font-bold mb-6">User Panel</h2>
       </Link>

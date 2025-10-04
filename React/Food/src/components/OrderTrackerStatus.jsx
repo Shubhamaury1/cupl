@@ -11,11 +11,35 @@ function OrderTrackerStatus() {
   const [newStatus, setNewStatus] = useState("");
 
   // Fetch all orders
+  // useEffect(() => {
+  //   const fetchOrders = async () => {
+  //     try {
+  //       const response = await axios.get(`${APP_URL}/OrdersControllers`);
+  //       setOrders(response.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //       toast.error("Failed to load orders");
+  //     }
+  //   };
+  //   fetchOrders();
+  // }, []);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(`${APP_URL}/OrdersControllers`);
-        setOrders(response.data);
+
+        // Filter out orders that are already Delivered
+        const filteredOrders = response.data.filter((order) => {
+          const trackers = order.trackers || [];
+          const latestStatus =
+            trackers.length > 0
+              ? trackers[trackers.length - 1].status
+              : "Pending";
+          return latestStatus !== "Delivered";
+        });
+
+        setOrders(filteredOrders);
       } catch (error) {
         console.error(error);
         toast.error("Failed to load orders");
@@ -76,13 +100,13 @@ function OrderTrackerStatus() {
       </h2>
 
       {/* Select Order */}
-      <label className="block mb-2 font-semibold text-gray-800">
+      <label className="block mb-2 font-semibold text-gray-800 dark:text-green-500">
         Select Order:
       </label>
       <select
         value={selectedOrder}
         onChange={(e) => setSelectedOrder(e.target.value)}
-        className="w-full p-3 mb-4 border rounded-lg bg-white text-gray-800"
+        className="w-full p-3 mb-4 border rounded-lg bg-white text-gray-800 dark:bg-blue-200"
       >
         <option value="">-- Choose an Order --</option>
         {orders.map((order) => (
@@ -95,21 +119,23 @@ function OrderTrackerStatus() {
       {/* Show Order Status & Update Option */}
       {selectedOrder && (
         <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-800">
+          <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-yellow-500">
             Current Status:
           </h3>
-          <p className="mb-4 text-gray-700">{status || "Pending"}</p>
+          <p className="mb-4 text-gray-700 dark:text-pink-500">
+            {status || "Pending"}
+          </p>
 
           {/* Status Update */}
           {status !== "Delivered" && status !== "Cancel" ? (
             <>
-              <label className="block mt-6 font-semibold text-gray-800">
+              <label className="block mt-6 font-semibold text-gray-800 dark:text-green-500">
                 Update Status:
               </label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value)}
-                className="w-full p-3 border rounded-lg bg-white text-gray-800 mt-2"
+                className="w-full p-3 border rounded-lg bg-white text-gray-800 mt-2 dark:bg-blue-200"
               >
                 <option value="">-- Select New Status --</option>
 

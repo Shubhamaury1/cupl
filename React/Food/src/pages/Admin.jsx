@@ -9,9 +9,19 @@ import { setSearch } from "../redux/slices/SearchSlice";
 import OrderTrackerStatus from "../components/OrderTrackerStatus";
 import AdminOrderDashboard from "../components/AdminOrderDashboard";
 import AdminMainPanel from "../components/AdminMainPanel";
+import { useNavigate, Link } from "react-router-dom";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const navigate = useNavigate();
+  // In your Admin page component
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    if (!isAdmin) {
+      toast.error("Access denied");
+      navigate("/"); // redirect to home
+    }
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -23,8 +33,8 @@ function App() {
         return <OrderTracker />;
       case "dashboard":
         return <Dashboard />;
-      case "logout":
-        return <Logout />;
+      // case "logout":
+      //   return <Logout />;
       default:
         return <Dashboard />;
     }
@@ -34,7 +44,12 @@ function App() {
     <div className="flex">
       {/* Sidebar */}
       <div className="w-64 bg-gray-800 text-white min-h-screen p-4">
-        <h2 className="text-xl font-semibold text-center mb-6 ">Admin Panel</h2>
+        <Link to="/">
+          <h2 className="text-xl font-semibold text-center mb-6 mt-6">
+            Admin Panel
+          </h2>
+        </Link>
+
         <ul>
           <li
             className="cursor-pointer p-3 hover:bg-gray-700 rounded mb-2"
@@ -61,12 +76,12 @@ function App() {
             File Upload
           </li>
 
-          <li
+          {/* <li
             className="cursor-pointer p-3 hover:bg-gray-700 rounded mb-2"
             onClick={() => setActiveTab("logout")}
           >
             Logout
-          </li>
+          </li> */}
         </ul>
       </div>
 
@@ -200,8 +215,8 @@ const FileUpload = () => {
           onClick={() => handlePageChange(i)}
           className={`px-3 py-1 mx-1 rounded ${
             currentPage === i
-              ? "bg-gray-600 text-white dark:bg-orange-400 dark:font-bold"
-              : "bg-gray-400 hover:bg-gray-300 dark:bg-orange-300 "
+              ? "bg-gray-600 text-white dark:bg-blue-500 dark:font-bold"
+              : "bg-gray-400 hover:bg-gray-300 dark:bg-blue-400 "
           }`}
         >
           {i}
@@ -248,9 +263,9 @@ const FileUpload = () => {
         } else {
           // add new product
           //setProducts((prev) => [...prev, updatedProduct]);
-          
+
           //show update product in top
-          setProducts((prev)=>[updatedProduct, ...prev])
+          setProducts((prev) => [updatedProduct, ...prev]);
           toast.success("Product added successfully!");
         }
 
@@ -298,7 +313,7 @@ const FileUpload = () => {
   return (
     <>
       <div className="">
-        <div className="bg-white p-8 rounded-xl shadow-md">
+        <div className="bg-white p-8 rounded-xl shadow-md dark:bg-blue-200">
           <h2 className="text-2xl font-bold text-blue-700 text-center mb-6">
             📦 Admin Product Upload
           </h2>
@@ -400,7 +415,7 @@ const FileUpload = () => {
 
         {/* ===================== TABLE SECTION ===================== */}
         {products.length > 0 ? (
-          <div className="mt-12 bg-white p-6 rounded-xl shadow-md">
+          <div className="mt-12 bg-white p-6 rounded-xl shadow-md dark:bg-blue-200">
             <div className="flex flex-col lg:flex-row items-center justify-between mb-4 gap-4">
               <h3 className="text-xl font-semibold mb-4 text-blue-700">
                 📋 Product List
@@ -416,7 +431,7 @@ const FileUpload = () => {
                   placeholder="Search Here"
                   autoComplete="off"
                   onChange={(e) => setQuery(e.target.value)}
-                  className="w-full pr-12 pl-4 py-3 text-sm rounded-full border border-gray-300 outline-none bg-white text-gray-900 dark:bg-orange-200 dark:text-black"
+                  className="w-full pr-12 pl-4 py-3 text-sm rounded-full border border-gray-300 outline-none bg-white text-gray-900 dark:bg-orange-200 dark:text-black dark:bg-white"
                 />
                 <button
                   type="submit"
@@ -428,7 +443,7 @@ const FileUpload = () => {
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-left border border-gray-200">
-                <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+                <thead className="bg-gray-100 text-gray-700 uppercase text-xs  dark:bg-blue-300">
                   <tr>
                     <th className="py-3 px-4 border-b">S.No</th>
                     <th className="py-3 px-4 border-b">Image</th>
@@ -451,7 +466,7 @@ const FileUpload = () => {
                     return (
                       <tr
                         key={product.id || idx}
-                        className="hover:bg-gray-50 text-gray-800"
+                        className="hover:bg-gray-50 text-gray-800 dark:hover:bg-blue-300 "
                       >
                         <td className="py-2 px-4 border-b text-gray-800">
                           {(currentPage - 1) * itemsPerPage + (idx + 1)}
@@ -513,11 +528,11 @@ const FileUpload = () => {
                 </tbody>
               </table>
               {totalPages > 1 && (
-                <div className="flex flex-wrap justify-center items-center gap-4my-4">
+                <div className="flex flex-wrap justify-center items-center gap-4 my-4">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-orange-400 cursor-pointer"
+                    className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-blue-500 cursor-pointer"
                   >
                     Previous
                   </button>
@@ -527,7 +542,7 @@ const FileUpload = () => {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-orange-400"
+                    className="px-3 py-1 mx-1 rounded bg-gray-400 hover:bg-gray-500 disabled:opacity-50 dark:bg-blue-500"
                   >
                     Next
                   </button>
@@ -539,7 +554,7 @@ const FileUpload = () => {
                       </label>
                       <select
                         id="pagesize"
-                        className="bg-white text-gray-800 ml-1 border border-gray-800 rounded"
+                        className="bg-white text-gray-800 ml-1 border border-gray-800 rounded dark:bg-blue-300"
                         value={
                           itemsPerPage === totalItems ? "All" : itemsPerPage
                         }
@@ -553,15 +568,15 @@ const FileUpload = () => {
                       </select>
                     </div>
                   )}
-                  <label className="text-gray-800 ml-5">Total Items: {totalItems }</label>
+                  <label className="text-gray-800 ml-5">
+                    Total Items: {totalItems}
+                  </label>
                 </div>
               )}
             </div>
           </div>
         ) : (
-          <p className="mt-8 text-center text-gray-600">
-            No product Found.
-          </p>
+          <p className="mt-8 text-center text-gray-600">No product Found.</p>
         )}
         <Toaster />
       </div>
@@ -570,13 +585,13 @@ const FileUpload = () => {
 };
 
 // Logout Section
-const Logout = () => (
-  <div className="text-gray-800">
-    <h1 className="text-3xl font-bold">You have logged out successfully!</h1>
-    <p className="mt-4 text-lg">
-      Thank you for using the admin panel. Come back soon!
-    </p>
-  </div>
-);
+// const Logout = () => (
+//   <div className="text-gray-800">
+//     <h1 className="text-3xl font-bold">You have logged out successfully!</h1>
+//     <p className="mt-4 text-lg">
+//       Thank you for using the admin panel. Come back soon!
+//     </p>
+//   </div>
+// );
 
 export default App;

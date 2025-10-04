@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 import PaymentMethod from "../components/PaymentMethod";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
-
 function ConfirmOrderPage() {
   const [address, setAddress] = useState([]); // Address list fetched from API
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null); // Index of the selected address
   const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery"); // Default payment method is COD
   
-
   const navigate = useNavigate(); // Hook for navigation
 
   // Fetching address data from API
@@ -132,26 +130,6 @@ function ConfirmOrderPage() {
         </div>
       </div>
 
-      {/* Payment Method Section */}
-      {/* <div className="payment-method mt-6">
-        <h2 className="text-xl mb-4 dark:text-green-500">
-          Select Payment Method
-        </h2>
-        <div className="flex items-center mb-4">
-          <input
-            type="radio"
-            id="cashOnDelivery"
-            name="paymentMethod"
-            value="cashOnDelivery"
-            checked={paymentMethod === "cashOnDelivery"}
-            onChange={handlePaymentMethodChange}
-            className="mr-2 cursor-pointer"
-          />
-          <label htmlFor="cashOnDelivery" className="text-lg dark:text-blue-400">
-            Cash on Delivery
-          </label>
-        </div>
-      </div> */}
       <PaymentMethod
         paymentMethod={paymentMethod}
         handlePaymentMethodChange={handlePaymentMethodChange}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 const APP_URL=import.meta.env.VITE_LOCAL_URL;
 import axios from "axios";
 
@@ -304,13 +303,6 @@ function Address() {
             ))}
           </div>
         )}
-
-        {/* <button
-          onClick={handlePlaceOrder}
-          className="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition"
-        >
-          Place Order
-        </button> */}
       </div>
     </div>
   );

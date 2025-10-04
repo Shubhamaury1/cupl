@@ -1,11 +1,13 @@
 import React from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 export default function Footer() {
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+
   return (
     <>
-      <div className="mt-20">
+      <div className="mt-24">
         <hr />
-        <footer className=" bg-gray-400 text-white dark:bg-orange-300">
+        <footer className=" bg-gray-400 text-white dark:bg-orange-300 ">
           <section className="flex sm:flex-row lg:flex-row justify-center dark:font-bold">
             <NavLink to="/about" className=" p-4">
               About us
@@ -16,9 +18,11 @@ export default function Footer() {
             <NavLink to="/policy" className="p-4">
               Policy
             </NavLink>
-            <NavLink to="/admin" className="p-4">
-              Admin
-            </NavLink>
+            {isAdmin && (
+              <NavLink to="/admin" className="p-4">
+                Admin
+              </NavLink>
+            )}
           </section>
 
           <section className="mb-3 cursor-pointer">

@@ -11,7 +11,7 @@ function AdminOrderDashboard() {
       try {
         //Fetch total order
         const response = await axios.get(`${APP_URL}/OrdersControllers`);
-       // console.log("order history", response.data);
+        //console.log("order history", response.data);
         setOrders(response.data);
 
         // Fetch total users
@@ -111,3 +111,4 @@ function AdminOrderDashboard() {
 }
 
 export default AdminOrderDashboard;
+

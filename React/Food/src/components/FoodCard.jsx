@@ -64,19 +64,6 @@ function FoodCard({ id, name, price, img, rating, userId,desc, handleToast, stoc
           </button>
         )}
       </div>
-
-      {/* <div className="flex justify-between">
-        <span className="flex justify-center items-center">
-          <FaStar className="mr-1 text-yellow-500 dark:text-orange-500" />
-          {rating}
-        </span>
-        <button
-          onClick={handleAddToCart} // Call the handleAddToCart function when clicked
-          className="p-1 text-white bg-green-500 hover:bg-green-700 rounded-lg ext-sm"
-        >
-          Add to Cart
-        </button>
-      </div> */}
       {isLowStock && (
         <p className="text-red-500 text-xs font-semibold">
           {/* Only a few items left! */}

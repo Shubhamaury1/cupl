@@ -52,8 +52,6 @@ function CategoryMenu() {
               </button>
             );
           })}
-
-       
         </div>
       </div>
     </>
