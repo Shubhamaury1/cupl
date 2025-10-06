@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import Address from "./Address";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function Loginenewpage() {
@@ -15,12 +16,16 @@ function Loginenewpage() {
     email: "",
     password: "",
   });
-
+  const [username, setUsername] = useState("");
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const storedUsername = localStorage.getItem("username");
     if (loggedIn) {
       setIsLoggedIn(true);
       setCurrentPage("home");
+      if (storedUsername) {
+        setUsername(storedUsername);
+      }
     }
   }, []);
 
@@ -33,10 +38,12 @@ function Loginenewpage() {
         password: loginData.password,
       });
       if (response.status === 200) {
-        //console.log(response.data);
+        console.log(response.data);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userid", response.data.userId);
         localStorage.setItem("isAdmin", response.data.isAdmin);
+        localStorage.setItem("username", response.data.username);
+        setUsername(response.data.username);
         setIsLoggedIn(true);
         setCurrentPage("home");
         localStorage.setItem("isLoggedIn", "true");
@@ -63,8 +70,10 @@ function Loginenewpage() {
       if (response.status === 200) {
         //console.log(response.data);
         toast.success("Registered successfully!");
+        setUsername(registerData.username);
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", registerData.username);
         //localStorage.setItem("userid", response.data.userId);
         setCurrentPage("home");
       }
@@ -83,6 +92,7 @@ function Loginenewpage() {
     localStorage.removeItem("userid");
     localStorage.removeItem("token"); //remove Token
     localStorage.removeItem("isAdmin"); // remove admin
+    localStorage.removeItem("username"); // remove username
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
   };
@@ -193,7 +203,10 @@ function Loginenewpage() {
   const renderSidebar = () => (
     <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen ">
       <Link to="/">
-        <h2 className="text-xl font-bold mb-6">User Panel</h2>
+        <h2 className="text-xl font-bold mb-6">
+          {" "}
+          Welcome {username || "User"}
+        </h2>
       </Link>
 
       <ul className="space-y-4">
@@ -206,12 +219,21 @@ function Loginenewpage() {
         >
           Order History
         </li>
-        <li
+        {/* <li
           className={`cursor-pointer hover:text-gray-300 ${
             activeTab === "address" ? "text-blue-400" : ""
           }`}
           //onClick={() => setActiveTab("address")}
           onClick={() => navigate("/address")}
+          
+        >
+          Manage Address
+        </li> */}
+        <li
+          className={`cursor-pointer hover:text-gray-300 ${
+            activeTab === "address" ? "text-blue-400" : ""
+          }`}
+          onClick={() => setActiveTab("address")}
         >
           Manage Address
         </li>
@@ -223,6 +245,13 @@ function Loginenewpage() {
         </li>
       </ul>
     </aside>
+  );
+//Address
+  const renderAddress = () => (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800">Manage Address</h1>
+      <Address />
+    </div>
   );
   // from the backend
   const [orders, setOrders] = useState([]);

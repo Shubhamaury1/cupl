@@ -8,14 +8,12 @@ import Contact from "./pages/Contact";
 import Policy from "./pages/Policy";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loginenewpage from "./components/Loginenewpage";
-import Address from "./pages/Address";
 import OrderDetails from "./pages/OrderDetails";
 import ConfirmOrderPage from "./pages/ConfirmOrderPage";
 import Admin from "./pages/Admin";
-import OrderTrackerStatus from "./components/OrderTrackerStatus";
-import AdminOrderDashboard from "./components/AdminOrderDashboard";
-import AdminMainPanel from "./components/AdminMainPanel";
-import AdminOrUser from "./components/AdminOrUser";
+
+
+
 
 function App() {
   return (
@@ -30,22 +28,11 @@ function App() {
           <Route path="/orderdetails/:id" element={<OrderDetails />} />
           <Route path="/confirmorderpage" element={<ConfirmOrderPage />} />
           <Route path="/loginenewpage" element={<Loginenewpage />} />
-          <Route path="/address" element={<Address />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<Error />} />
-          <Route path="/ordertrackerstatus" element={<OrderTrackerStatus />} />
-          <Route
-            path="/adminorderdashboard"
-            element={<AdminOrderDashboard />}
-          />
-          <Route
-            path="/adminmainpanel"
-            element={<AdminMainPanel />}
-          />
-          <Route path="/adminoruser" element={<AdminOrUser/>} />
         </Routes>
       </BrowserRouter>
     </>

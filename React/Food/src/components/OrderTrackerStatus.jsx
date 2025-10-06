@@ -36,7 +36,7 @@ function OrderTrackerStatus() {
             trackers.length > 0
               ? trackers[trackers.length - 1].status
               : "Pending";
-          return latestStatus !== "Delivered";
+          return latestStatus !== "Delivered" && latestStatus !== "Cancel";
         });
 
         setOrders(filteredOrders);

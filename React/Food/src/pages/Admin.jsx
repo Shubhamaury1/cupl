@@ -10,10 +10,13 @@ import OrderTrackerStatus from "../components/OrderTrackerStatus";
 import AdminOrderDashboard from "../components/AdminOrderDashboard";
 import AdminMainPanel from "../components/AdminMainPanel";
 import { useNavigate, Link } from "react-router-dom";
+import AdminOrUser from "../components/AdminOrUser";
+
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
+  
   // In your Admin page component
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
@@ -95,6 +98,7 @@ function App() {
 const Admin = () => (
   <div className="text-gray-800">
     <AdminMainPanel></AdminMainPanel>
+    <AdminOrUser></AdminOrUser>
   </div>
 );
 

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-const APP_URL=import.meta.env.VITE_LOCAL_URL;
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 import axios from "axios";
 
 function Address() {
- 
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
@@ -76,10 +75,10 @@ function Address() {
     setIsEditing(false);
     setEditIndex(null);
   };
-  const userid = localStorage.getItem("userid");  
+  const userid = localStorage.getItem("userid");
   const mapToApiAddress = (addr, id = null) => ({
     ...(id !== null && { id }),
-    
+
     uid: userid, // Replace with dynamic user ID if needed
     addressType: addr.addresstype,
     userName: addr.userName,
@@ -114,12 +113,11 @@ function Address() {
           `${APP_URL}/Addresses/${idToUpdate}`,
           mapToApiAddress(saveaddress, idToUpdate)
         );
-        
+
         const updatedAddress = {
           ...saveaddress,
           id: response.data.id,
         };
-        
 
         const updatedList = [...addressList];
         updatedList[editIndex] = updatedAddress;
@@ -127,7 +125,7 @@ function Address() {
         toast.success("Address updated!");
       } else {
         const response = await axios.post(
-           `${APP_URL}/Addresses`,
+          `${APP_URL}/Addresses`,
           mapToApiAddress(saveaddress)
         );
 

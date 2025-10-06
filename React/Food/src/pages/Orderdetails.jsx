@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 import { useParams } from "react-router-dom";
+import jsPDF from "jspdf";
 
 function OrderDetails() {
   const [order, setOrder] = useState(null);
@@ -47,11 +48,84 @@ function OrderDetails() {
       ? order.trackers[order.trackers.length - 1]
       : { status: "Pending", date: "20-09-2025" };
 
+  // Download invoice 
+const downloadInvoice = () => {
+  // check if order is exist or not
+  if (!order) {
+    console.log("Order data not available");
+    return;
+  }
+  const doc = new jsPDF();
+  // Adding the Title
+  doc.setFontSize(20);
+  doc.text("Invoice", 105, 20, null, null, "center");
+
+  // Invoice Information Section
+  doc.setFontSize(12);
+  doc.text(`Invoice Number: ${order.id}`, 20, 40);
+  doc.text(`Invoice Date: ${order.orderDate}`, 20, 50);
+  doc.text(`Payment Method: Cash On Delivery`, 20, 60);
+  doc.text(`Status: ${tracker.status}`, 150, 60);
+
+  // Draw a line separate the section from the bill
+  doc.line(20, 70, 190, 70);
+
+  // Shipping Address
+  doc.setFontSize(14);
+  doc.text("Shipping Address:", 20, 80);
+  doc.setFontSize(12);
+  doc.text(`Name: ${addressFields["Name"]}`, 20, 90);
+  doc.text(`Phone: ${addressFields["Phone"]}`, 20, 100);
+  doc.text(`Address Type: ${addressFields["Type"]}`, 20, 110);
+  doc.text(
+    `Address: ${addressFields["House No"]}, ${addressFields["Landmark"]}, ${addressFields["City"]}, ${addressFields["Region"]} - ${addressFields["PinCode"]}`,
+    20,
+    120
+  );
+
+  // Draw a line separate the section from the bill
+  doc.line(20, 130, 190, 130);
+
+  // Ordered Item Section
+  doc.setFontSize(14);
+  doc.text("Ordered Item(s):", 20, 140);
+
+  doc.setFontSize(12);
+  // Draw table header of product
+  doc.text("Product", 20, 150);
+  doc.text("Quantity", 100, 150);
+  doc.text("Price", 150, 150);
+
+  // Draw a line separate the section from the bill
+  doc.line(20, 155, 190, 155);
+
+  doc.text(`${order.productName}`, 20, 160);
+  doc.text(`${order.orderQuantity}`, 105, 160);
+  doc.text(`${order.productPrice}`, 150, 160);
+ 
+  // Total Paymebnt Section
+  doc.text(`Total Price: ${order.totalPrice}`, 20, 175);
+
+  // Save the document
+  doc.save(`Invoice_${order.id}.pdf`);
+};
+
   return (
-    <div className="max-w-4xl mx-auto p-6 text-gray-800 h-screen">
-      <h1 className="text-3xl font-bold mb-6 border-b pb-2 dark:text-green-500">
-        Order Details
-      </h1>
+    <div className=" flex flex-col max-w-4xl mx-auto p-6 text-gray-800 h-screen">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold border-b pb-2 dark:text-green-500">
+          Order Details
+        </h1>
+        {tracker.status === "Delivered" && (
+          <button
+            onClick={downloadInvoice}
+            type="button"
+            className="text-white bg-blue-500 rounded-lg py-2 px-4"
+          >
+            Download Invoice
+          </button>
+        )}
+      </div>
 
       {/* Order Summary */}
       <section className="mb-6">
