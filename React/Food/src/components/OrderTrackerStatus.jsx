@@ -141,11 +141,11 @@ function OrderTrackerStatus() {
 
                 {status === "Pending" && (
                   <>
-                    <option value="Confirm">Confirm</option>
+                    <option value="Confirmed">Confirmed</option>
                     <option value="Cancel">Cancel</option>
                   </>
                 )}
-                {status === "Confirm" && (
+                {status === "Confirmed" && (
                   <option value="Dispatched">Dispatched</option>
                 )}
                 {status === "Dispatched" && (

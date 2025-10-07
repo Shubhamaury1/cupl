@@ -3,6 +3,7 @@ import axios from "axios";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
+import logo from "../assets/chef.png";
 
 function OrderDetails() {
   const [order, setOrder] = useState(null);
@@ -48,67 +49,118 @@ function OrderDetails() {
       ? order.trackers[order.trackers.length - 1]
       : { status: "Pending", date: "20-09-2025" };
 
-  // Download invoice 
-const downloadInvoice = () => {
-  // check if order is exist or not
-  if (!order) {
-    console.log("Order data not available");
-    return;
-  }
-  const doc = new jsPDF();
-  // Adding the Title
-  doc.setFontSize(20);
-  doc.text("Invoice", 105, 20, null, null, "center");
+  const downloadInvoice = () => {
+    // check if order is exist or not
+    if (!order) {
+      console.log("Order data not available");
+      return;
+    }
 
-  // Invoice Information Section
-  doc.setFontSize(12);
-  doc.text(`Invoice Number: ${order.id}`, 20, 40);
-  doc.text(`Invoice Date: ${order.orderDate}`, 20, 50);
-  doc.text(`Payment Method: Cash On Delivery`, 20, 60);
-  doc.text(`Status: ${tracker.status}`, 150, 60);
+    const doc = new jsPDF();
 
-  // Draw a line separate the section from the bill
-  doc.line(20, 70, 190, 70);
+    // Add Company Name here
+    doc.setFontSize(20);
+    doc.text("AllDayEats", 20, 20);
 
-  // Shipping Address
-  doc.setFontSize(14);
-  doc.text("Shipping Address:", 20, 80);
-  doc.setFontSize(12);
-  doc.text(`Name: ${addressFields["Name"]}`, 20, 90);
-  doc.text(`Phone: ${addressFields["Phone"]}`, 20, 100);
-  doc.text(`Address Type: ${addressFields["Type"]}`, 20, 110);
-  doc.text(
-    `Address: ${addressFields["House No"]}, ${addressFields["Landmark"]}, ${addressFields["City"]}, ${addressFields["Region"]} - ${addressFields["PinCode"]}`,
-    20,
-    120
-  );
+    // Add a Title
+    doc.setFontSize(18);
+    doc.text("Invoice", 100, 20);
 
-  // Draw a line separate the section from the bill
-  doc.line(20, 130, 190, 130);
+    // Add a logo
+    const img = new Image();
+    img.src = logo;
+    doc.addImage(img, "png", 160, 10, 20, 20);
+   
 
-  // Ordered Item Section
-  doc.setFontSize(14);
-  doc.text("Ordered Item(s):", 20, 140);
+    // Invoice Information Section
+    doc.setFontSize(12);
+    doc.text(`Invoice Number: ${order.id}`, 20, 35);
+    doc.text(`Invoice Date: ${order.orderDate}`, 20, 40);
+    doc.text(`Payment Method: Cash On Delivery`, 20, 45);
+    doc.text(`Status: ${tracker.status}`, 150, 45);
 
-  doc.setFontSize(12);
-  // Draw table header of product
-  doc.text("Product", 20, 150);
-  doc.text("Quantity", 100, 150);
-  doc.text("Price", 150, 150);
+    // Draw a line separating the section
+    doc.line(20, 55, 190, 55);
 
-  // Draw a line separate the section from the bill
-  doc.line(20, 155, 190, 155);
+    // Billing Address
+    doc.setFontSize(14);
+    doc.text("Billing Address:", 20, 65);
+    doc.setFontSize(12);
+    doc.text(`Name: ${addressFields["Name"]}`, 20, 70);
+    doc.text(`Phone: ${addressFields["Phone"]}`, 20, 75);
+    doc.text(`Address Type: ${addressFields["Type"]}`, 20, 80);
+    doc.text(
+      `Address: ${addressFields["House No"]}, ${addressFields["Landmark"]}, ${addressFields["City"]}, ${addressFields["Region"]} - ${addressFields["PinCode"]}`,
+      20,
+      85
+    );
 
-  doc.text(`${order.productName}`, 20, 160);
-  doc.text(`${order.orderQuantity}`, 105, 160);
-  doc.text(`${order.productPrice}`, 150, 160);
- 
-  // Total Paymebnt Section
-  doc.text(`Total Price: ${order.totalPrice}`, 20, 175);
+    // Draw a line separating the section
+    doc.line(20, 90, 190, 90);
 
-  // Save the document
-  doc.save(`Invoice_${order.id}.pdf`);
-};
+    // Shipping Address
+    doc.setFontSize(14);
+    doc.text("Shipping Address:", 20, 100);
+    doc.setFontSize(12);
+    doc.text(`Name: ${addressFields["Name"]}`, 20, 105);
+    doc.text(`Phone: ${addressFields["Phone"]}`, 20, 110);
+    doc.text(`Address Type: ${addressFields["Type"]}`, 20, 115);
+    doc.text(
+      `Address: ${addressFields["House No"]}, ${addressFields["Landmark"]}, ${addressFields["City"]}, ${addressFields["Region"]} - ${addressFields["PinCode"]}`,
+      20,
+      120
+    );
+
+    // Draw a line separating the section
+    doc.line(20, 130, 190, 130);
+
+    // Ordered Items Table Section
+    doc.setFontSize(14);
+    doc.text("Ordered Item(s):", 20, 140);
+
+    doc.setFontSize(12);
+
+    // Draw table header with background color and border
+    const startY = 150;
+    const headerHeight = 10;
+    const rowHeight = 10;
+    const colWidths = [90, 40, 40]; // Adjust column widths
+
+    doc.setFillColor(200, 200, 200); // Light grey background for header
+    doc.rect(20, startY, colWidths[0], headerHeight, "F"); // Product column
+    doc.rect(110, startY, colWidths[1], headerHeight, "F"); // Quantity column
+    doc.rect(150, startY, colWidths[2], headerHeight, "F"); // Price column
+
+    // Set the header text
+    doc.setTextColor(0, 0, 0); // Black text color
+    doc.text("Product", 25, startY + 7);
+    doc.text("Quantity", 115, startY + 7);
+    doc.text("Price", 155, startY + 7);
+
+    // Draw a border for the table header
+    doc.rect(20, startY, 170, headerHeight);
+
+    // Draw the product details rows
+    let currentY = startY + headerHeight;
+    doc.text(order.productName, 25, currentY + 7);
+    doc.text(order.orderQuantity.toString(), 120, currentY + 7);
+    doc.text(order.productPrice.toFixed(2), 155, currentY + 7);
+
+    // Draw a border around the rows
+    doc.rect(20, currentY, 170, rowHeight); // For one row
+
+    // Draw a line separating the table from the total
+    currentY += rowHeight;
+    doc.line(20, currentY, 190, currentY);
+
+    // Total Price Section
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Total Price: ${order.totalPrice.toFixed(2)}`, 20, currentY + 10); // Bold and formatted total price
+
+    // Save the document with a dynamic filename
+    doc.save(`Invoice_${order.id}.pdf`);
+  };
 
   return (
     <div className=" flex flex-col max-w-4xl mx-auto p-6 text-gray-800 h-screen">
