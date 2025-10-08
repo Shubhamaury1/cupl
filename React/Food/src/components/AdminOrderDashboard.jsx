@@ -26,17 +26,14 @@ function AdminOrderDashboard() {
 
   // Filter orders by status
   const totalOrders = orders.length;
-  const pendingOrders = orders.filter(
-    (o) => o.trackers[o.trackers.length - 1].status === "Pending"
-  ).length;
   const confirmOrders = orders.filter(
-    (o) => o.trackers[o.trackers.length - 1].status === "Confirm"
+    (o) => o.trackers[o.trackers.length - 1].status === "Confirmed"
   ).length;
-   const cancelOrders = orders.filter(
-     (o) => o.trackers[o.trackers.length - 1].status === "Cancel"
-   ).length;
   const dispatchedOrders = orders.filter(
     (o) => o.trackers[o.trackers.length - 1].status === "Dispatched"
+  ).length;
+  const shippedOrders = orders.filter(
+    (o) => o.trackers[o.trackers.length - 1].status === "Shipped"
   ).length;
   const outForDeliveryOrders = orders.filter(
     (o) => o.trackers[o.trackers.length - 1].status === "Out for Delivery"
@@ -54,23 +51,18 @@ function AdminOrderDashboard() {
       color: "bg-gradient-to-br from-blue-500 to-purple-400",
     },
     {
-      title: "Pending Orders",
-      value: pendingOrders,
-      color: "bg-gradient-to-br from-yellow-500 to-pink-500",
-    },
-    {
-      title: "Cancel Orders",
-      value: cancelOrders,
-      color: "bg-gradient-to-br from-red-700 to-orange-300",
-    },
-    {
       title: "Confirm Orders",
       value: confirmOrders,
-      color: "bg-gradient-to-br from-gray-700 to-pink-400",
+      color: "bg-gradient-to-br from-yellow-500 to-pink-400",
     },
     {
       title: "Dispatched Orders",
       value: dispatchedOrders,
+      color: "bg-gradient-to-br from-purple-500 to-orange-400",
+    },
+    {
+      title: "Shipped Orders",
+      value: shippedOrders,
       color: "bg-gradient-to-br from-purple-500 to-orange-400",
     },
     {

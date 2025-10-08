@@ -36,7 +36,7 @@ function OrderTrackerStatus() {
             trackers.length > 0
               ? trackers[trackers.length - 1].status
               : "Pending";
-          return latestStatus !== "Delivered" && latestStatus !== "Cancel";
+          return latestStatus !== "Delivered" ;
         });
 
         setOrders(filteredOrders);
@@ -61,7 +61,7 @@ function OrderTrackerStatus() {
           const latestStatus =
             trackers.length > 0
               ? trackers[trackers.length - 1].status
-              : "Pending";
+              : "Confirmed";
 
           setStatus(latestStatus);
           setNewStatus(""); // reset on select change
@@ -123,11 +123,11 @@ function OrderTrackerStatus() {
             Current Status:
           </h3>
           <p className="mb-4 text-gray-700 dark:text-pink-500">
-            {status || "Pending"}
+            {status || "Confirmed"}
           </p>
 
           {/* Status Update */}
-          {status !== "Delivered" && status !== "Cancel" ? (
+          {status !== "Delivered" ? (
             <>
               <label className="block mt-6 font-semibold text-gray-800 dark:text-green-500">
                 Update Status:
@@ -139,16 +139,15 @@ function OrderTrackerStatus() {
               >
                 <option value="">-- Select New Status --</option>
 
-                {status === "Pending" && (
+                {status === "Confirmed" && (
                   <>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Cancel">Cancel</option>
+                    <option value="Dispatched">Dispatched</option>
                   </>
                 )}
-                {status === "Confirmed" && (
-                  <option value="Dispatched">Dispatched</option>
-                )}
                 {status === "Dispatched" && (
+                  <option value="Shipped">Shipped</option>
+                )}
+                {status === "Shipped" && (
                   <option value="Out for Delivery">Out for Delivery</option>
                 )}
                 {status === "Out for Delivery" && (

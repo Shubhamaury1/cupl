@@ -1,16 +1,36 @@
-import React ,{ useState }from "react";
+import React ,{ useState,useEffect }from "react";
 import { FaStar } from "react-icons/fa";
 import axios from "axios"; // Import Axios
 import { useDispatch } from "react-redux";
-import { addToCart } from "../redux/slices/CartSlice"; // Assuming you have Redux set up for cart management
+import { addToCart } from "../redux/slices/CartSlice";
+import toast from "react-hot-toast";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
-function FoodCard({ id, name, price, img, rating, userId,desc, handleToast, stock }) {
+function FoodCard({ id, name, price, img, rating, desc, stock, PQunatity }) {
   const dispatch = useDispatch();
   const userid=localStorage.getItem("userid")
   const qty = 1;
-  // show more options
   const [showMore, setShowMore] = useState(false);
+   const [productQuantity, setProductQuantity] = useState(0);
+  const [totalProductQuantity, setTotalProductQuantity] = useState(0);
+  
+  useEffect(() => {
+    const fetchTotalProductQuantity = async () => {
+      try {
+        const response = await axios.get(`${APP_URL}/Products/${id}`);
+        if (response.status === 200) {
+          setTotalProductQuantity(response.data.totalProductQuantity);
+           //console.log(response.data);
+        } else {
+          toast.error("Error fetching product data.");
+        }
+      } catch (error) {
+        console.error("Error during the API call:", error);
+        toast.error("Something went wrong while fetching product data.");
+      }
+    };
+    fetchTotalProductQuantity();
+  }, []);
 
   // Function to handle Add to Cart
   const handleAddToCart = async () => {
@@ -24,12 +44,22 @@ function FoodCard({ id, name, price, img, rating, userId,desc, handleToast, stoc
       UId: userid,
       PQunatity: qty,
     };
+    // Check every time if we click add to cart button
+    
+    if (productQuantity >= totalProductQuantity) {
+      toast.error("Cannot add more items than available in stock.");
+      return;
+    }
+      //console.log("hello",productQuantity)
     try {
       dispatch(addToCart(cartItem));
       await axios.post(`${APP_URL}/Carts`, cartItem);
-      handleToast(name);
+      setProductQuantity(productQuantity);
+      toast.success(`${name} has been added to the cart`);
+      //handleToast(name);
     } catch (error) {
       console.error("Error adding item to cart:", error);
+      toast.error("Item is Out Of Stock ");
     }
   };
   //stock check
@@ -94,3 +124,4 @@ function FoodCard({ id, name, price, img, rating, userId,desc, handleToast, stoc
 }
 
 export default FoodCard;
+

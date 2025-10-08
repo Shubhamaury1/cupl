@@ -22,7 +22,7 @@ function FoodItems() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          // `https://localhost:7076/api/FileUpload/all?pageNumber=${currentPage}&pageSize=${itemsPerPage}`
+          
           `${APP_URL}/FileUpload/all`,
           {
             params: {
