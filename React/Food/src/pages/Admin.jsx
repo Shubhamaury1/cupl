@@ -18,13 +18,13 @@ function App() {
   const navigate = useNavigate();
   
   // In your Admin page component
-  useEffect(() => {
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
-    if (!isAdmin) {
-      toast.error("Access denied");
-      navigate("/"); // redirect to home
-    }
-  }, []);
+  // useEffect(() => {
+  //   const isAdmin = localStorage.getItem("isAdmin") === "true";
+  //   if (!isAdmin) {
+  //     toast.error("Access denied");
+  //     navigate("/"); // redirect to home
+  //   }
+  // }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -126,6 +126,7 @@ const FileUpload = () => {
     category: "",
     rating: "",
     totalProductQuantity: "",
+    isactive:"",
     file: null,
   });
   const [totalPages, setTotalPages] = useState(1);
@@ -239,6 +240,7 @@ const FileUpload = () => {
     fd.append("description", formData.description);
     fd.append("category", formData.category);
     fd.append("totalProductQuantity", formData.totalProductQuantity);
+    fd.append("isactive",formData.isactive);
     fd.append("rating", formData.rating);
     if (formData.file) {
       fd.append("file", formData.file);
@@ -282,6 +284,7 @@ const FileUpload = () => {
           category: "",
           rating: "",
           totalProductQuantity: "",
+          isactive:"",
           file: null,
         });
       } else {
@@ -310,6 +313,7 @@ const FileUpload = () => {
       category: product.category,
       rating: product.rating,
       totalProductQuantity: product.totalProductQuantity,
+      isactive: product.isactive,
       file: null, // You can't edit the file through the form, so leave it as null
     });
   };
@@ -375,6 +379,24 @@ const FileUpload = () => {
                 />
               </div>
             ))}
+
+            {/*Active product or not */}
+            <div className="">
+              <label className="block mb-1 font-medium text-gray-700">
+                Active
+              </label>
+              <select
+                name="isactive"
+                id="isactive"
+                value={formData.isactive}
+                onChange={handleChange}
+                className="w-full border px-2 py-2 rounded bg-white dark:shadow-md text-gray-800"
+              >
+                <option value="">-- Select --</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
 
             {/* Description */}
             <div className="md:col-span-2">
@@ -457,6 +479,7 @@ const FileUpload = () => {
                     <th className="py-3 px-4 border-b">Total Quantity</th>
                     <th className="py-3 px-4 border-b">Rating</th>
                     <th className="py-3 px-4 border-b max-w-xs">Description</th>
+                    <th className="py-3 px-4 border-b max-w-xs">Active</th>
                     <th className="py-3 px-4 border-b">Actions</th>
                   </tr>
                 </thead>
@@ -517,6 +540,14 @@ const FileUpload = () => {
                               {isExpanded ? "Show Less" : "...Show More"}
                             </button>
                           )}
+                        </td>
+
+                        <td className="py-2 px-4 border-b text-gray-800">
+                          {/* {String(product.isactive)} */}
+                          {product.isactive === "true" ||
+                          product.isactive === true
+                            ? "Active"
+                            : "Inactive"}
                         </td>
                         <td className="py-2 px-4 border-b space-x-2">
                           <button

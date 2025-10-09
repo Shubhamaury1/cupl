@@ -5,6 +5,8 @@ import ItemCart from "./ItemCart";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
+
 function Cart() {
   const [activeCart, setActiveCart] = useState(false);
   const cartItems = useSelector((state) => state.cart.cart);
@@ -18,7 +20,26 @@ function Cart() {
     0
   );
   // Check login status
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  //const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  // const token = localStorage.getItem("token");
+  // const decode = jwtDecode(token);
+  // const isLoggedIn = decode.isLoggedIn === true || decode.isLoggedIn === "true";
+
+  const token = localStorage.getItem("token");
+
+  let isLoggedIn = false; // Default to false
+
+  if (token && typeof token === "string") {
+    try {
+      const decode = jwtDecode(token);
+      isLoggedIn = decode.isLoggedIn === true || decode.isLoggedIn === "true";
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      isLoggedIn = false; // Token is invalid, not logged in
+    }
+  }
+
   useEffect(() => {
     if (activeCart && !isLoggedIn) {
       navigate("/loginenewpage");
@@ -44,8 +65,8 @@ function Cart() {
           />
         </div>
 
-        {cartItems.length > 0 ? (  
-          cartItems.map((food,index) => {
+        {cartItems.length > 0 ? (
+          cartItems.map((food, index) => {
             return (
               <ItemCart
                 key={food.id || index}
@@ -78,9 +99,9 @@ function Cart() {
                 toast.error("Cart is Empty!");
                 return;
               }
-              
+
               // navigate("/address");
-              navigate("/confirmorderpage")
+              navigate("/confirmorderpage");
             }}
             className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] lg:w-[18vw] mt-5 mb-10 dark:shadow-green-500 shadow-md dark:bg-gray-800 dark:text-green-400"
           >
@@ -99,8 +120,7 @@ function Cart() {
         }}
         className={`rounded-full bg-white shadow-md text-6xl p-3 fixed bottom-8 right-4 text-gray-900 dark:text-white dark:bg-gray-800 ${
           totalQty > 0 && "animate-bounce delay-500 transition-all duration-500"
-          }`}
-        
+        }`}
       />
     </>
   );

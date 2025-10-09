@@ -3,6 +3,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import PaymentMethod from "../components/PaymentMethod";
+import { jwtDecode } from "jwt-decode";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function ConfirmOrderPage() {
@@ -54,7 +55,11 @@ function ConfirmOrderPage() {
 
     // Get the selected address from the array
     const selectedAddress = address[selectedAddressIndex];
-    const userid = localStorage.getItem("userid");
+    //const userid = localStorage.getItem("userid");
+
+    const token = localStorage.getItem("token");
+    const decode = jwtDecode(token);
+    const userid = decode.userid;           
     // Prepare the order data
     const newOrder = {
       uId: userid, // Replace with actual user ID if needed

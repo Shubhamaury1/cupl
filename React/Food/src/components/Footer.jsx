@@ -1,8 +1,28 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 export default function Footer() {
-  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  //const isAdmin = localStorage.getItem("isAdmin") === "true";
+  // const token = localStorage.getItem("token");
+  // const decode = jwtDecode(token)
+  // const isAdmin = decode.isAdmin === "true" || decode.isAdmin === true || decode.isAdmin===1;
 
+
+  const token = localStorage.getItem("token");
+  let isAdmin = false;
+  if (token && typeof token === "string") {
+    try {
+      const decode = jwtDecode(token);
+      isAdmin =
+        decode.isAdmin === true ||
+        decode.isAdmin === "True" ||
+        decode.isAdmin === 1;
+      console.log("Admin are",isAdmin)
+    } catch (error) {
+      console.error("Invalid token:", error);
+      isAdmin = false;
+    }
+  }
   return (
     <>
       <div className="mt-24">

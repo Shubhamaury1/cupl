@@ -1,35 +1,62 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Address from "./Address";
+import { jwtDecode } from "jwt-decode";
+
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function Loginenewpage() {
-  const [currentPage, setCurrentPage] = useState("welcome"); // welcome, login, register, home
+  // ✅ Initialize username directly from token
+  const initialUsername = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        return decoded.username || "";
+      } catch (err) {
+        console.error("Error decoding token", err);
+        return "";
+      }
+    }
+    return "";
+  };
+
+  const [currentPage, setCurrentPage] = useState("welcome");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activeTab, setActiveTab] = useState("orderHistory"); // or 'address'
+  const [activeTab, setActiveTab] = useState("orderHistory");
+  const [username, setUsername] = useState(initialUsername);
   const navigate = useNavigate();
+
   const [loginData, setLoginData] = useState({ username: "", password: "" });
   const [registerData, setRegisterData] = useState({
     username: "",
     email: "",
     password: "",
   });
-  const [username, setUsername] = useState("");
+
+  // ✅ Run once on page load to check token
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    const storedUsername = localStorage.getItem("username");
-    if (loggedIn) {
-      setIsLoggedIn(true);
-      setCurrentPage("home");
-      if (storedUsername) {
-        setUsername(storedUsername);
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decode = jwtDecode(token);
+        const loggedIn =
+          decode.isLoggedIn === "true" || decode.isLoggedIn === true;
+        if (loggedIn) {
+          setIsLoggedIn(true);
+          setCurrentPage("home");
+          if (decode.username) setUsername(decode.username);
+        }
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        localStorage.removeItem("token");
       }
     }
   }, []);
 
-  // Handle Login From Backend
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -38,15 +65,11 @@ function Loginenewpage() {
         password: loginData.password,
       });
       if (response.status === 200) {
-        console.log(response.data);
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userid", response.data.userId);
-        localStorage.setItem("isAdmin", response.data.isAdmin);
-        localStorage.setItem("username", response.data.username);
-        setUsername(response.data.username);
+        const decoded = jwtDecode(response.data.token);
+        setUsername(decoded.username || loginData.username); // fallback
         setIsLoggedIn(true);
         setCurrentPage("home");
-        localStorage.setItem("isLoggedIn", "true");
         toast.success("Login successful!");
       }
     } catch (error) {
@@ -55,7 +78,6 @@ function Loginenewpage() {
     }
   };
 
-  // Handle Registration From Backend
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -68,35 +90,178 @@ function Loginenewpage() {
         }
       );
       if (response.status === 200) {
-        //console.log(response.data);
-        toast.success("Registered successfully!");
-        setUsername(registerData.username);
+        localStorage.setItem("token", response.data.token);
+        const decoded = jwtDecode(response.data.token);
+        setUsername(decoded.username || registerData.username);
         setIsLoggedIn(true);
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("username", registerData.username);
-        //localStorage.setItem("userid", response.data.userId);
         setCurrentPage("home");
+        toast.success("Registered successfully!");
       }
     } catch (error) {
-      toast.error(error.response.data || "Something went wrong!");
+      toast.error(error.response?.data || "Something went wrong!");
     }
   };
 
-  // Logout
   const handleLogout = () => {
     setIsLoggedIn(false);
-    //setCurrentPage("home");
     navigate("/");
-    toast.success("Your are Loggout Successfully");
-    localStorage.removeItem("isLoggedIn"); //Clear login
-    localStorage.removeItem("userid");
-    localStorage.removeItem("token"); //remove Token
-    localStorage.removeItem("isAdmin"); // remove admin
-    localStorage.removeItem("username"); // remove username
+    toast.success("You are logged out successfully.");
+    localStorage.removeItem("token");
     setLoginData({ username: "", password: "" });
     setRegisterData({ username: "", email: "", password: "" });
+    setUsername("");
+    setCurrentPage("welcome");
   };
 
+  // Sidebar
+  const renderSidebar = () => (
+    <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen">
+      <Link to="/">
+        <h2 className="text-xl font-bold mb-6">
+          Welcome {username || "Loading..."}
+        </h2>
+      </Link>
+      <ul className="space-y-4">
+        <li
+          className={`cursor-pointer hover:text-gray-300 ${
+            activeTab === "orderHistory" ? "text-blue-400" : ""
+          }`}
+          onClick={() => setActiveTab("orderHistory")}
+        >
+          Order History
+        </li>
+        <li
+          className={`cursor-pointer hover:text-gray-300 ${
+            activeTab === "address" ? "text-blue-400" : ""
+          }`}
+          onClick={() => setActiveTab("address")}
+        >
+          Manage Address
+        </li>
+        <li
+          className="cursor-pointer hover:text-red-300 text-red-500 font-semibold"
+          onClick={handleLogout}
+        >
+          Logout
+        </li>
+      </ul>
+    </aside>
+  );
+
+  // Address Page
+  const renderAddress = () => (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800">Manage Address</h1>
+      <Address />
+    </div>
+  );
+
+  // Order History
+  const [orders, setOrders] = useState([]);
+  const loginWarningShownRef = useRef(false);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const decode = jwtDecode(token);
+        const userid = decode.userid;
+        if (!userid) {
+          if (!loginWarningShownRef.current) {
+            toast("You are not logged in. Please log in first.", {
+              icon: "⚠️",
+              duration: 4000,
+            });
+            loginWarningShownRef.current = true;
+          }
+          return;
+        }
+
+        const response = await axios.get(
+          `${APP_URL}/OrdersControllers/${userid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Error loading orders:", error);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchOrder();
+    }
+  }, [isLoggedIn]);
+
+  const renderOrderHistory = () => (
+    <div className="p-8 text-gray-800 dark:bg-gray-800">
+      <h1 className="text-2xl font-bold mb-6 dark:text-green-500">
+        Order History
+      </h1>
+      {orders.length === 0 ? (
+        <p>No orders found.</p>
+      ) : (
+        orders.map((order) => {
+          const latestTracker =
+            order.trackers && order.trackers.length > 0
+              ? order.trackers[order.trackers.length - 1]
+              : { status: "Pending", date: "20-09-2025" };
+
+          return (
+            <div key={order.id} className="mb-8">
+              <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
+                <div className="mb-4 sm:mb-0 flex justify-center sm:justify-start">
+                  <img
+                    src={order.imageUrl}
+                    alt={order.productName}
+                    className="w-32 h-32 object-cover rounded-lg"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-1 justify-center items-center sm:items-start pl-4 sm:pl-6">
+                  <p className="text-lg font-semibold text-gray-900 dark:text-blue-600 text-center sm:text-left">
+                    {order.productName}
+                  </p>
+                  <p className="text-sm text-gray-700 font-medium dark:text-green-600">
+                    Ordered on: {order.orderDate}
+                  </p>
+                </div>
+                <div className="flex flex-col justify-between items-center sm:items-end pl-4 sm:pl-6 mt-4 sm:mt-0">
+                  <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
+                    Order: Confirm
+                  </span>
+                  <div className="mt-2">
+                    <button
+                      onClick={() => navigate(`/orderdetails/${order.id}`)}
+                      className="text-blue-600 hover:underline text-sm dark:text-green-500"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+
+  const renderHome = () => (
+    <div className="flex min-h-screen">
+      {renderSidebar()}
+      <main className="flex-1 bg-gray-100">
+        {activeTab === "orderHistory" ? renderOrderHistory() : renderAddress()}
+      </main>
+    </div>
+  );
+
+  // Welcome Page
   const renderWelcome = () => (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 space-y-6">
       <h1 className="text-3xl font-bold text-gray-800">
@@ -200,173 +365,9 @@ function Loginenewpage() {
     </div>
   );
 
-  const renderSidebar = () => (
-    <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen ">
-      <Link to="/">
-        <h2 className="text-xl font-bold mb-6">
-          {" "}
-          Welcome {username || "User"}
-        </h2>
-      </Link>
-
-      <ul className="space-y-4">
-        <li
-          className={`cursor-pointer hover:text-gray-300 ${
-            activeTab === "orderHistory" ? "text-blue-400" : ""
-          }`}
-          onClick={() => setActiveTab("orderHistory")}
-          //onClick={() => navigate("/order")}
-        >
-          Order History
-        </li>
-        {/* <li
-          className={`cursor-pointer hover:text-gray-300 ${
-            activeTab === "address" ? "text-blue-400" : ""
-          }`}
-          //onClick={() => setActiveTab("address")}
-          onClick={() => navigate("/address")}
-          
-        >
-          Manage Address
-        </li> */}
-        <li
-          className={`cursor-pointer hover:text-gray-300 ${
-            activeTab === "address" ? "text-blue-400" : ""
-          }`}
-          onClick={() => setActiveTab("address")}
-        >
-          Manage Address
-        </li>
-        <li
-          className="cursor-pointer hover:text-red-300 text-red-500 font-semibold"
-          onClick={handleLogout}
-        >
-          Logout
-        </li>
-      </ul>
-    </aside>
-  );
-//Address
-  const renderAddress = () => (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Manage Address</h1>
-      <Address />
-    </div>
-  );
-  // from the backend
-  const [orders, setOrders] = useState([]);
-  const loginWarningShownRef = useRef(false); // check login current or not in home page
-  useEffect(() => {
-    const fetchOrder = async () => {
-      const userid = localStorage.getItem("userid");
-      const token = localStorage.getItem("token");
-
-      if (!userid || !token) {
-        // Show warning only once using ref
-        if (!loginWarningShownRef.current) {
-          toast("You are not logged in. Please log in first.", {
-            icon: "⚠️",
-            duration: 4000,
-          });
-          loginWarningShownRef.current = true; // 👈 Prevent repeat
-        }
-        return;
-      }
-
-      try {
-        const response = await axios.get(
-          `${APP_URL}/OrdersControllers/${userid}`,
-          {
-            headers: {
-              Authorization: `Bearer${token}`,
-            },
-          }
-        );
-        //console.log("Fetched Orders:", response.data);
-        setOrders(response.data);
-      } catch (error) {
-        console.error("Error to loading:", error);
-      }
-    };
-    fetchOrder();
-  }, [isLoggedIn]);
-
-  const renderOrderHistory = () => {
-    return (
-      <div className="p-8 text-gray-800 dark:bg-gray-800">
-        <h1 className="text-2xl font-bold mb-6 dark:text-green-500">
-          Order History
-        </h1>
-
-        {orders.length === 0 ? (
-          <p>No orders found.</p>
-        ) : (
-          orders.map((order) => {
-            // Get the latest trackerof the order
-            const latestTracker =
-              order.trackers && order.trackers.length > 0
-                ? order.trackers[order.trackers.length - 1]
-                : { status: "Pending", date: "20-09-2025" };
-
-            return (
-              <div key={order.id} className="mb-8 ">
-                <div className="space-y-4">
-                  <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
-                    {/* Left Image */}
-                    <div className="mb-4 sm:mb-0 flex justify-center sm:justify-start">
-                      <img
-                        src={order.imageUrl}
-                        alt={order.productName}
-                        className="w-32 h-32 object-cover rounded-lg"
-                      />
-                    </div>
-
-                    {/* Middle Product Information */}
-                    <div className="flex flex-col sm:flex-1 justify-center items-center sm:items-start pl-4 sm:pl-6">
-                      <p className="text-lg font-semibold text-gray-900 dark:text-blue-600 text-center sm:text-left">
-                        {order.productName}
-                      </p>
-                      <p className="text-sm text-gray-700 font-medium dark:text-green-600">
-                        Ordered on: {order.orderDate}
-                      </p>
-                    </div>
-
-                    {/* Right Button */}
-                    <div className="flex flex-col justify-between items-center sm:items-end pl-4 sm:pl-6 mt-4 sm:mt-0">
-                      <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
-                        Order: Confirm
-                      </span>
-
-                      <div className="mt-2">
-                        <button
-                          onClick={() => navigate(`/orderdetails/${order.id}`)}
-                          className="text-blue-600 hover:underline text-sm dark:text-green-500"
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-    );
-  };
-  const renderHome = () => (
-    <div className="flex min-h-screen">
-      {renderSidebar()}
-      <main className="flex-1 bg-gray-100">
-        {activeTab === "orderHistory" ? renderOrderHistory() : renderAddress()}
-      </main>
-    </div>
-  );
-
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />;
+      <Toaster position="top-center" reverseOrder={false} />
       {currentPage === "welcome" && renderWelcome()}
       {currentPage === "login" && renderLogin()}
       {currentPage === "register" && renderRegister()}

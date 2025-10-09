@@ -35,7 +35,11 @@ function FoodItems() {
         );
         if (response.status === 200) {
           const data = response.data;
-          setFoods(data.items || []);
+          // Filter only active items
+          const activeItems = (data.items || []).filter(
+            (item) => item.isactive === true
+          );
+          setFoods(activeItems);
           setTotalPages(data.totalPages);
           setTotalItems(data.totalItems);
         } else {
