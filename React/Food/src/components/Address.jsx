@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+
 
 function Address() {
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
@@ -10,8 +11,6 @@ function Address() {
   const [editIndex, setEditIndex] = useState(null);
   const [addressList, setAddressList] = useState([]);
   const [loading, setLoading] = useState(true);
-  //const cartItems = useSelector((state) => state.cart.cart);
-  const navigate = useNavigate();
 
   const [saveaddress, setSaveaddress] = useState({
     userName: "",
@@ -23,14 +22,25 @@ function Address() {
     city: "",
     country: "",
   });
-
+  
   useEffect(() => {
     const fetchAddresses = async () => {
+    const token = localStorage.getItem("token");
+    const decode = jwtDecode(token);
+    const userid = decode.userid;
+      //console.log("Userid is", userid);
+      
+       if (!userid || !token) {
+         toast.error("User not authenticated.");
+         return;
+       }
+
       try {
-        const response = await axios.get(
-          // "https://localhost:7076/api/Addresses"
-          `${APP_URL}/Addresses`
-        );
+        const response = await axios.get(`${APP_URL}/Addresses/${userid}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach the token to the request
+          },
+        });
         const data = response.data;
 
         const normalized = data.map((item) => ({
@@ -54,7 +64,7 @@ function Address() {
     };
 
     fetchAddresses();
-  }, [addressList]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,7 +85,10 @@ function Address() {
     setIsEditing(false);
     setEditIndex(null);
   };
-  const userid = localStorage.getItem("userid");
+
+  const token = localStorage.getItem("token");
+  const decode = jwtDecode(token);
+  const userid = decode.userid;
   const mapToApiAddress = (addr, id = null) => ({
     ...(id !== null && { id }),
 
@@ -104,14 +117,26 @@ function Address() {
       toast.error("Please fill all required fields!");
       return;
     }
-
+     const token = localStorage.getItem("token"); 
+     if (!token) {
+       toast.error("User is not authenticated to edit.");
+       return;
+    }
+    
     try {
       if (isEditing && editIndex !== null) {
         const idToUpdate = addressList[editIndex].id;
+
         console.log("Hello");
+        
         const response = await axios.put(
-          `${APP_URL}/Addresses/${idToUpdate}`,
-          mapToApiAddress(saveaddress, idToUpdate)
+          `${APP_URL}/Addresses/${userid}`,
+          mapToApiAddress(saveaddress, idToUpdate),
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         const updatedAddress = {
@@ -126,7 +151,12 @@ function Address() {
       } else {
         const response = await axios.post(
           `${APP_URL}/Addresses`,
-          mapToApiAddress(saveaddress)
+          mapToApiAddress(saveaddress),
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         setAddressList((prev) => [
@@ -155,9 +185,18 @@ function Address() {
 
   const handleDelete = async (index) => {
     const idToDelete = addressList[index].id;
-
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("User is not authenticated.");
+      return;
+    }
     try {
-      await axios.delete(`${APP_URL}/Addresses/${idToDelete}`);
+      await axios.delete(`${APP_URL}/Addresses/${userid}`),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
       const updatedList = addressList.filter((_, i) => i !== index);
       setAddressList(updatedList);
       toast.success("Address deleted!");

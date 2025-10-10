@@ -11,20 +11,22 @@ import AdminOrderDashboard from "../components/AdminOrderDashboard";
 import AdminMainPanel from "../components/AdminMainPanel";
 import { useNavigate, Link } from "react-router-dom";
 import AdminOrUser from "../components/AdminOrUser";
-
+import { jwtDecode } from "jwt-decode";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
   
-  // In your Admin page component
-  // useEffect(() => {
-  //   const isAdmin = localStorage.getItem("isAdmin") === "true";
-  //   if (!isAdmin) {
-  //     toast.error("Access denied");
-  //     navigate("/"); // redirect to home
-  //   }
-  // }, []);
+ // In your Admin page component
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    const decode = jwtDecode(token);
+    const isAdmin = decode.isAdmin === "True" ||decode.isAdmin===true;
+    if (!isAdmin) {
+      toast.error("Access denied");
+      navigate("/"); // redirect to home
+    }
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {

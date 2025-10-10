@@ -19,13 +19,6 @@ function Cart() {
     (total, item) => total + item.PQunatity * item.price,
     0
   );
-  // Check login status
-  //const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-  // const token = localStorage.getItem("token");
-  // const decode = jwtDecode(token);
-  // const isLoggedIn = decode.isLoggedIn === true || decode.isLoggedIn === "true";
-
   const token = localStorage.getItem("token");
 
   let isLoggedIn = false; // Default to false

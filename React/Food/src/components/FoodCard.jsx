@@ -10,11 +10,6 @@ const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function FoodCard({ id, name, price, img, rating, desc, stock, PQunatity }) {
   const dispatch = useDispatch();
-  //const userid=localStorage.getItem("userid")
-
-  // const token = localStorage.getItem("token");
-  // const decode = jwtDecode(token);
-  // const userid = decode.userid;
 
    const token = localStorage.getItem("token");
    let userid = null;

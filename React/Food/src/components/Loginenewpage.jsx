@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
@@ -9,7 +8,6 @@ import { jwtDecode } from "jwt-decode";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function Loginenewpage() {
-  // ✅ Initialize username directly from token
   const initialUsername = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -37,7 +35,6 @@ function Loginenewpage() {
     password: "",
   });
 
-  // ✅ Run once on page load to check token
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -94,7 +91,7 @@ function Loginenewpage() {
         const decoded = jwtDecode(response.data.token);
         setUsername(decoded.username || registerData.username);
         setIsLoggedIn(true);
-        setCurrentPage("home");
+        navigate("/");
         toast.success("Registered successfully!");
       }
     } catch (error) {

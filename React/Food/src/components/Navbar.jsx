@@ -63,13 +63,6 @@ function Navbar() {
               className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 "
             />
           </NavLink>
-          {/* <FaRegUserCircle
-            size={60}
-            className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 "
-            onClick={() => document.getElementById("my_modal_3").showModal()}
-          /> */}
-          {/* <Login /> */}
-          {/* <Logout/> */}
         </div>
       </nav>
     </>

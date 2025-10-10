@@ -23,7 +23,7 @@ function FoodItems() {
       try {
         const response = await axios.get(
           
-          `${APP_URL}/FileUpload/all`,
+          `${APP_URL}/FileUpload/User/all`,
           {
             params: {
               pageNumber: currentPage,
@@ -115,6 +115,12 @@ function FoodItems() {
         ) : (
           <p className="text-gray-600 text-lg">No food items found.</p>
         )}
+      </div>
+
+      <div className="ml-10">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          Best Product Sell In Our Website
+        </h3>
       </div>
 
       {/* Pagination Controls */}

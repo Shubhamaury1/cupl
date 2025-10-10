@@ -2,11 +2,6 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 export default function Footer() {
-  //const isAdmin = localStorage.getItem("isAdmin") === "true";
-  // const token = localStorage.getItem("token");
-  // const decode = jwtDecode(token)
-  // const isAdmin = decode.isAdmin === "true" || decode.isAdmin === true || decode.isAdmin===1;
-
 
   const token = localStorage.getItem("token");
   let isAdmin = false;
@@ -17,7 +12,7 @@ export default function Footer() {
         decode.isAdmin === true ||
         decode.isAdmin === "True" ||
         decode.isAdmin === 1;
-      console.log("Admin are",isAdmin)
+      //console.log("Admin are",isAdmin)
     } catch (error) {
       console.error("Invalid token:", error);
       isAdmin = false;
