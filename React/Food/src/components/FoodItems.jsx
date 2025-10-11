@@ -3,10 +3,13 @@ import FoodCard from "./FoodCard";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import BestSellerCard from "./BestSellerCard";
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
+
 
 function FoodItems() {
   const [foods, setFoods] = useState([]);
+  const [bestSellerFood, setBestSellerFoods] = useState([]);
   const selectedCategory = useSelector((state) => state.category.category);
   const search = useSelector((state) => state.search.search);
   const loggedInUserId = 1;
@@ -35,6 +38,7 @@ function FoodItems() {
         );
         if (response.status === 200) {
           const data = response.data;
+          //console.log("Data are",data.items)
           // Filter only active items
           const activeItems = (data.items || []).filter(
             (item) => item.isactive === true
@@ -51,6 +55,28 @@ function FoodItems() {
     };
     fetchData();
   }, [currentPage, itemsPerPage, search, selectedCategory]);
+
+
+  // BestSeller Card
+  useEffect(() => {
+    const bestSeller = async () => {
+      try {
+        const res = await axios.get(`${APP_URL}/OrdersControllers/bestseller`);
+        if (res.status === 200) {
+          const data = res.data;
+          //console.log("data",data)
+          setBestSellerFoods(data);
+        }
+        else {
+          console.log("Data does not received");
+        }
+      } catch (error) {
+        console.error("Error fetching food items:", error);
+      }
+    };
+    bestSeller();
+  },[])
+  
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -121,6 +147,26 @@ function FoodItems() {
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
           Best Product Sell In Our Website
         </h3>
+        <div className="flex flex-wrap gap-12 justify-center lg:justify-start mt-7">
+          {bestSellerFood.length > 0 ? (
+            bestSellerFood.map((item) => (
+              <BestSellerCard
+                key={item.pId}
+                pId={item.pId}
+                name={item.productName}
+                price={item.productPrice}
+                desc={item.description}
+                rating={item.rating}
+                img={item.imageUrl}
+                handleToast={addhandleToast}
+                userId={loggedInUserId}
+                stock={item.totalProductQuantity}
+              />
+            ))
+          ) : (
+            <p className="text-gray-600 text-lg">No Best Seller Product.</p>
+          )}
+        </div>
       </div>
 
       {/* Pagination Controls */}
