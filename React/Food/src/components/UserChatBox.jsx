@@ -1,13 +1,206 @@
-import React, { useEffect, useState, useRef } from "react";
-import * as signalR from "@microsoft/signalr";
+// import React, { useState, useEffect, useRef } from "react";
+// import * as signalR from "@microsoft/signalr";
+// import { jwtDecode } from "jwt-decode";
 
-function UserChatBox({ userId = "54" }) {
-  const ADMIN_ID = "55"; // use actual admin id from DB
+// function UserChatBox() {
+//   const token = localStorage.getItem("token");
+//   const [userId, setUserId] = useState(null);
+
+//     useEffect(() => {
+//       if (token) {
+//         try {
+//           const decoded = jwtDecode(token);
+//           setUserId(decoded.userid);
+//           console.log("UserId is",decoded)
+//         } catch (err) {
+//           console.error("Invalid token:", err);
+//         }
+//       } else {
+//         console.warn("No token found in localStorage");
+//       }
+//     }, [token]);
+
+//   const ADMIN_ID = "55"; // your admin id from DB
+//   const [isOpen, setIsOpen] = useState(false);
+//   const [messages, setMessages] = useState([]);
+//   const [input, setInput] = useState("");
+//   const connectionRef = useRef(null);
+//   const messagesEndRef = useRef(null);
+
+//   //SignalR connection
+//   useEffect(() => {
+//     const conn = new signalR.HubConnectionBuilder()
+//       .withUrl(`https://localhost:7076/chatHub?userId=${userId}`)
+//       .withAutomaticReconnect()
+//       .configureLogging(signalR.LogLevel.Information)
+//       .build();
+
+//     conn
+//       .start()
+//       .then(() => {
+//         console.log("✅ Connected (User Chat)");
+
+//         // Load old chat history
+//         fetch(`https://localhost:7076/api/chat/history/${userId}/${ADMIN_ID}`)
+//           .then((res) => res.json())
+//           .then((data) => setMessages(data));
+//       })
+//       .catch((err) => console.error("SignalR connection error:", err));
+
+//     // Listen for incoming messages
+//     conn.on("ReceiveMessage", (msg) => {
+//       setMessages((prev) => [...prev, msg]);
+//     });
+
+//     connectionRef.current = conn;
+//     return () => conn.stop();
+//   }, [userId]);
+
+//   // Auto scroll to bottom
+//   useEffect(() => {
+//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [messages]);
+
+//   // Send message
+//   const sendMessage = async () => {
+//     if (!input.trim()) return;
+//     try {
+//       await connectionRef.current.invoke(
+//         "SendMessage",
+//         userId,
+//         ADMIN_ID,
+//         input
+//       );
+//       setInput("");
+//     } catch (err) {
+//       console.error("SendMessage error:", err);
+//     }
+//   };
+
+//   return (
+//     <>
+//       {/* Floating Button */}
+//       <div
+//         onClick={() => setIsOpen(!isOpen)}
+//         className="fixed bottom-5 left-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-700 z-50"
+//       >
+//         💬
+//       </div>
+
+//       {/* Chat Popup */}
+//       {isOpen && (
+//         <div className="fixed bottom-20 left-5 bg-white border shadow-lg rounded-lg w-80 h-96 flex flex-col z-50">
+//           {/* Header */}
+//           <div className="bg-blue-600 text-white p-3 rounded-t flex justify-between items-center">
+//             <span className="font-semibold">Customer Support</span>
+//             <button
+//               onClick={() => setIsOpen(false)}
+//               className="text-white hover:text-gray-200"
+//             >
+//               ✖
+//             </button>
+//           </div>
+
+//           {/* Messages Area */}
+//           <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
+//             {messages.map((m, i) => (
+//               <div
+//                 key={i}
+//                 className={`mb-2 ${
+//                   m.senderId === userId ? "text-right" : "text-left"
+//                 }`}
+//               >
+//                 <span
+//                   className={`inline-block px-3 py-2 rounded-lg text-sm ${
+//                     m.senderId === userId
+//                       ? "bg-blue-500 text-white"
+//                       : "bg-gray-200 text-black"
+//                   }`}
+//                 >
+//                   {m.message}
+//                 </span>
+//               </div>
+//             ))}
+//             <div ref={messagesEndRef} />
+//           </div>
+
+//           {/* Input Area */}
+//           <div className="p-2 flex border-t">
+//             <input
+//               value={input}
+//               onChange={(e) => setInput(e.target.value)}
+//               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+//               placeholder="Type a message..."
+//               className="flex-1 border rounded-l p-2 text-sm outline-none bg-white text-gray-800"
+//             />
+//             <button
+//               onClick={sendMessage}
+//               className="bg-blue-600 text-white px-3 rounded-r text-sm hover:bg-blue-700 transition-all"
+//             >
+//               Send
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//     </>
+//   );
+// }
+
+// export default UserChatBox;
+
+
+import React, { useState, useEffect, useRef } from "react";
+import * as signalR from "@microsoft/signalr";
+import { jwtDecode } from "jwt-decode";
+
+function UserChatBox() {
+  const token = localStorage.getItem("token");
+  const [userId, setUserId] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminId, setAdminId] = useState(null); // Dynamic admin ID
+
+  useEffect(() => {
+    if (token && typeof token === "string") {
+      try {
+        const decoded = jwtDecode(token);
+
+        if (decoded.userid) setUserId(decoded.userid);
+        if (decoded.isAdmin !== undefined) {
+          const admin =
+            decoded.isAdmin === true ||
+            decoded.isAdmin === "True" ||
+            decoded.isAdmin === "true" ||
+            decoded.isAdmin === 1;
+          setIsAdmin(admin);
+        }
+
+        // Set admin ID from token (assuming token contains it)
+        if (decoded.adminid) {
+          setAdminId(decoded.adminid);
+        } else {
+          // Fallback to default admin if not present
+          setAdminId("55");
+        }
+
+        console.log("UserId:", decoded.userid, "AdminId:", decoded.adminid);
+      } catch (err) {
+        console.error("Invalid token:", err);
+      }
+    } else {
+      console.warn("No token found in localStorage");
+    }
+  }, [token]);
+
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const connectionRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
+  // SignalR connection
   useEffect(() => {
+    if (!userId || isAdmin || !adminId) return;
+
     const conn = new signalR.HubConnectionBuilder()
       .withUrl(`https://localhost:7076/chatHub?userId=${userId}`)
       .withAutomaticReconnect()
@@ -17,10 +210,13 @@ function UserChatBox({ userId = "54" }) {
     conn
       .start()
       .then(() => {
-        console.log("✅ Connected (User)");
-        fetch(`https://localhost:7076/api/chat/history/${userId}/${ADMIN_ID}`)
+        console.log("✅ Connected to SignalR Hub");
+
+        // Load chat history dynamically with adminId
+        fetch(`https://localhost:7076/api/chat/history/${userId}/${adminId}`)
           .then((res) => res.json())
-          .then((data) => setMessages(data));
+          .then((data) => setMessages(data))
+          .catch((err) => console.error("Error fetching chat history:", err));
       })
       .catch((err) => console.error("SignalR connection error:", err));
 
@@ -30,67 +226,88 @@ function UserChatBox({ userId = "54" }) {
 
     connectionRef.current = conn;
     return () => conn.stop();
-  }, [userId]);
+  }, [userId, isAdmin, adminId]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !userId || !adminId) return;
     try {
-      await connectionRef.current.invoke(
-        "SendMessage",
-        userId,
-        ADMIN_ID,
-        input
-      );
-      setMessages((p) => [
-        ...p,
-        { senderId: userId, receiverId: ADMIN_ID, message: input },
-      ]);
+      await connectionRef.current.invoke("SendMessage", userId, adminId, input);
       setInput("");
     } catch (err) {
       console.error("SendMessage error:", err);
     }
   };
 
+  if (isAdmin) return null; // Hide chat box for admins
+
   return (
-    <div className="p-4 border rounded max-w-md mx-auto">
-      <h2 className="text-xl mb-4 text-gray-800">Chat with Admin</h2>
-      <div className="h-64 bg-gray-100 p-2 overflow-y-auto mb-4 rounded">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`mb-2 ${
-              m.senderId === userId ? "text-right" : "text-left"
-            }`}
-          >
-            <span
-              className={`px-3 py-2 rounded ${
-                m.senderId === userId
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-black"
-              }`}
+    <>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-5 left-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-700 z-50"
+      >
+        💬
+      </div>
+
+      {isOpen && (
+        <div className="fixed bottom-20 left-5 bg-white border shadow-lg rounded-lg w-80 h-96 flex flex-col z-50">
+          <div className="bg-blue-600 text-white p-3 rounded-t flex justify-between items-center">
+            <span className="font-semibold">Customer Support</span>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white hover:text-gray-200"
             >
-              {m.message}
-            </span>
+              ✖
+            </button>
           </div>
-        ))}
-      </div>
-      <div className="flex">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1 border p-2 rounded-l bg-white text-gray-800"
-          placeholder="Type message..."
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-blue-500 text-white px-4 rounded-r"
-        >
-          Send
-        </button>
-      </div>
-    </div>
+
+          <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`mb-2 ${
+                  m.senderId === userId ? "text-right" : "text-left"
+                }`}
+              >
+                <span
+                  className={`inline-block px-3 py-2 rounded-lg text-sm ${
+                    m.senderId === userId
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                >
+                  {m.message}
+                </span>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="p-2 flex border-t">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="Type a message..."
+              className="flex-1 border rounded-l p-2 text-sm outline-none bg-white text-gray-800"
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-blue-600 text-white px-3 rounded-r text-sm hover:bg-blue-700 transition-all"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 export default UserChatBox;
+
+

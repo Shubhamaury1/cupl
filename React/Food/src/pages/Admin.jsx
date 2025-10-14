@@ -39,8 +39,8 @@ function App() {
         return <OrderTracker />;
       case "dashboard":
         return <Dashboard />;
-       case "chatbox":
-         return <Chatbox />;
+      case "chat-dashboard":
+        return <ChatDashboard />;
       default:
         return <Dashboard />;
     }
@@ -84,9 +84,9 @@ function App() {
 
           <li
             className="cursor-pointer p-3 hover:bg-gray-700 rounded mb-2"
-            onClick={() => setActiveTab("chatbox")}
+            onClick={() => setActiveTab("chat-dashboard")}
           >
-            Chatbox 
+            Chat Dashboard
           </li>
         </ul>
       </div>
@@ -623,7 +623,7 @@ const FileUpload = () => {
 };
 
 // Chatbox Section
-const Chatbox = () => (
+const ChatDashboard = () => (
   <div className="text-gray-800">
     <AdminChatBox></AdminChatBox>
    

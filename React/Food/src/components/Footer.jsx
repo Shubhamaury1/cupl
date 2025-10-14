@@ -1,6 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import UserChatBox from "./UserChatBox";
+
+
 export default function Footer() {
 
   const token = localStorage.getItem("token");
@@ -20,6 +23,7 @@ export default function Footer() {
   }
   return (
     <>
+      {!isAdmin && <UserChatBox />}
       <div className="mt-24">
         <hr />
         <footer className=" bg-gray-400 text-white dark:bg-orange-300 ">
@@ -33,9 +37,9 @@ export default function Footer() {
             <NavLink to="/policy" className="p-4">
               Policy
             </NavLink>
-            <NavLink to="/userchatbox" className="p-4">
-              Chat
-            </NavLink>
+            {/* <NavLink to="/userchatbox" className="p-4">
+              ChatBox
+            </NavLink> */}
             {isAdmin && (
               <NavLink to="/admin" className="p-4">
                 Admin
