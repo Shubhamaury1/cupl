@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { setSearch } from "../redux/slices/SearchSlice";
 import OrderTrackerStatus from "../components/OrderTrackerStatus";
 import AdminOrderDashboard from "../components/AdminOrderDashboard";
+import AdminChatBox from "../components/AdminChatBox";
 import AdminMainPanel from "../components/AdminMainPanel";
 import { useNavigate, Link } from "react-router-dom";
 import AdminOrUser from "../components/AdminOrUser";
@@ -38,8 +39,8 @@ function App() {
         return <OrderTracker />;
       case "dashboard":
         return <Dashboard />;
-      // case "logout":
-      //   return <Logout />;
+       case "chatbox":
+         return <Chatbox />;
       default:
         return <Dashboard />;
     }
@@ -81,12 +82,12 @@ function App() {
             File Upload
           </li>
 
-          {/* <li
+          <li
             className="cursor-pointer p-3 hover:bg-gray-700 rounded mb-2"
-            onClick={() => setActiveTab("logout")}
+            onClick={() => setActiveTab("chatbox")}
           >
-            Logout
-          </li> */}
+            Chatbox 
+          </li>
         </ul>
       </div>
 
@@ -621,14 +622,12 @@ const FileUpload = () => {
   );
 };
 
-// Logout Section
-// const Logout = () => (
-//   <div className="text-gray-800">
-//     <h1 className="text-3xl font-bold">You have logged out successfully!</h1>
-//     <p className="mt-4 text-lg">
-//       Thank you for using the admin panel. Come back soon!
-//     </p>
-//   </div>
-// );
+// Chatbox Section
+const Chatbox = () => (
+  <div className="text-gray-800">
+    <AdminChatBox></AdminChatBox>
+   
+  </div>
+);
 
 export default App;

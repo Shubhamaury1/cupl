@@ -1,11 +1,11 @@
+
 import React, { useEffect, useState } from "react";
 import FoodCard from "./FoodCard";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import BestSellerCard from "./BestSellerCard";
-const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
+const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
 function FoodItems() {
   const [foods, setFoods] = useState([]);
@@ -14,82 +14,119 @@ function FoodItems() {
   const search = useSelector((state) => state.search.search);
   const loggedInUserId = 1;
 
-// start 
-  //Pagination Logic for frontend
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; // it can only changed according to frontend
+  const itemsPerPage = 6;
 
+  // Fetch Best Sellers 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          
-          `${APP_URL}/FileUpload/User/all`,
-          {
-            params: {
-              pageNumber: currentPage,
-              pageSize: itemsPerPage,
-              searchTerm: search,
-              category: selectedCategory === "All" ? null : selectedCategory,
-            },
-          }
-        );
-        if (response.status === 200) {
-          const data = response.data;
-          //console.log("Data are",data.items)
-          // Filter only active items
-          const activeItems = (data.items || []).filter(
-            (item) => item.isactive === true
-          );
-          setFoods(activeItems);
-          setTotalPages(data.totalPages);
-          setTotalItems(data.totalItems);
-        } else {
-          console.log("Data does not received");
-        }
-      } catch (error) {
-        console.error("Error fetching food items:", error);
-      }
-    };
-    fetchData();
-  }, [currentPage, itemsPerPage, search, selectedCategory]);
-
-
-  // BestSeller Card
-  useEffect(() => {
-    const bestSeller = async () => {
+    const fetchBestSellers = async () => {
       try {
         const res = await axios.get(`${APP_URL}/OrdersControllers/bestseller`);
         if (res.status === 200) {
-          const data = res.data;
-          //console.log("data",data)
-          setBestSellerFoods(data);
+          setBestSellerFoods(res.data);
         }
-        else {
-          console.log("Data does not received");
+      } catch (error) {
+        console.error("Error fetching best sellers:", error);
+      }
+    };
+    fetchBestSellers();
+  }, []);
+
+  // Fetch food items and merge a/c to best seller
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${APP_URL}/FileUpload/User/all`, {
+          params: {
+            pageNumber: 1,
+            pageSize: 100, // Fetch all page
+            searchTerm: search,
+            category: selectedCategory === "All" ? null : selectedCategory,
+          },
+        });
+
+        if (response.status === 200) {
+          const data = response.data;
+
+          const activeItems = (data.items || []).filter(
+            (item) => item.isactive === true
+          );
+
+          const bestSellerIds = bestSellerFood.map((item) => item.pId);
+
+          // Format best sellers
+          const bestSellers = bestSellerFood.map((item) => ({
+            id: item.pId,
+            name: item.productName,
+            price: item.productPrice,
+            description: item.description,
+            rating: item.rating,
+            imageUrl: item.imageUrl,
+            totalProductQuantity: item.totalProductQuantity,
+            isBestSeller: true,
+          }));
+
+          // Remove best sellers from active items
+          const nonBestSellers = activeItems
+            .filter((item) => !bestSellerIds.includes(item.id))
+            .map((item) => ({
+              ...item,
+              isBestSeller: false,
+            }));
+
+          // Calculate total items and total pages
+          const totalItemsCount = bestSellers.length + nonBestSellers.length;
+          const remainingAfterFirstPage = Math.max(
+            0,
+            nonBestSellers.length - (itemsPerPage - bestSellers.length)
+          );
+          const totalPagesCalc =
+            totalItemsCount <= itemsPerPage
+              ? 1
+              : 1 + Math.ceil(remainingAfterFirstPage / itemsPerPage);
+
+          let finalList = [];
+
+          if (currentPage === 1) {
+            // Page 1:- In these page we show Best sellers + non-best selller
+            const combined = [...bestSellers, ...nonBestSellers];
+            finalList = combined.slice(0, itemsPerPage);
+          } else {
+            // Page > 1:- Only non-best sellers show in the next page
+            const offset =
+              (currentPage - 2) * itemsPerPage +
+              (itemsPerPage - bestSellers.length);
+            finalList = nonBestSellers.slice(offset, offset + itemsPerPage);
+          }
+
+          setFoods(finalList);
+          setTotalItems(totalItemsCount);
+          setTotalPages(totalPagesCalc);
+        } else {
+          console.log("Failed to fetch food items");
         }
       } catch (error) {
         console.error("Error fetching food items:", error);
       }
     };
-    bestSeller();
-  },[])
-  
 
-  // Handle page change
+    fetchData();
+  }, [currentPage, itemsPerPage, search, selectedCategory, bestSellerFood]);
+
+  // Handle pagination button click
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
   };
 
-  // Render pagination buttons (same as before)
+  // Render page buttons
   const renderPageNumbers = () => {
     const pages = [];
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
-    // Manage button 
+
     if (endPage - startPage < 4) {
       if (startPage === 1) {
         endPage = Math.min(totalPages, startPage + 4);
@@ -113,12 +150,12 @@ function FoodItems() {
         </button>
       );
     }
+
     return pages;
   };
-  // end paginations
-
 
   const addhandleToast = (name) => toast.success(`Added ${name} to cart`);
+
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
@@ -136,37 +173,12 @@ function FoodItems() {
               handleToast={addhandleToast}
               userId={loggedInUserId}
               stock={item.totalProductQuantity}
+              isBestSeller={item.isBestSeller}
             />
           ))
         ) : (
           <p className="text-gray-600 text-lg">No food items found.</p>
         )}
-      </div>
-
-      <div className="ml-10">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Best Product Sell In Our Website
-        </h3>
-        <div className="flex flex-wrap gap-12 justify-center lg:justify-start mt-7">
-          {bestSellerFood.length > 0 ? (
-            bestSellerFood.map((item) => (
-              <BestSellerCard
-                key={item.pId}
-                pId={item.pId}
-                name={item.productName}
-                price={item.productPrice}
-                desc={item.description}
-                rating={item.rating}
-                img={item.imageUrl}
-                handleToast={addhandleToast}
-                userId={loggedInUserId}
-                stock={item.totalProductQuantity}
-              />
-            ))
-          ) : (
-            <p className="text-gray-600 text-lg">No Best Seller Product.</p>
-          )}
-        </div>
       </div>
 
       {/* Pagination Controls */}
@@ -196,5 +208,3 @@ function FoodItems() {
 }
 
 export default FoodItems;
-
-

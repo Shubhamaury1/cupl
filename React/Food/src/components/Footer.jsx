@@ -33,6 +33,9 @@ export default function Footer() {
             <NavLink to="/policy" className="p-4">
               Policy
             </NavLink>
+            <NavLink to="/userchatbox" className="p-4">
+              Chat
+            </NavLink>
             {isAdmin && (
               <NavLink to="/admin" className="p-4">
                 Admin

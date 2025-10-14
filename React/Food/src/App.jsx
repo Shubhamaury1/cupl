@@ -11,6 +11,8 @@ import Loginenewpage from "./components/Loginenewpage";
 import OrderDetails from "./pages/OrderDetails";
 import ConfirmOrderPage from "./pages/ConfirmOrderPage";
 import Admin from "./pages/Admin";
+import UserChatBox from "./components/UserChatBox";
+import AdminChatBox from "./components/AdminChatBox";
 
 
 
@@ -21,10 +23,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/success"
-            element={<ProtectedRoute element={<Success />} />}
-          />
+          <Route path="/success" element={<ProtectedRoute element={<Success />} />}/>
           <Route path="/orderdetails/:id" element={<OrderDetails />} />
           <Route path="/confirmorderpage" element={<ConfirmOrderPage />} />
           <Route path="/loginenewpage" element={<Loginenewpage />} />
@@ -32,6 +31,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/userchatbox" element={<UserChatBox />} />
+          <Route path="/adminchatbox" element={<AdminChatBox/> } />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

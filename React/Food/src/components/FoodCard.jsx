@@ -8,34 +8,44 @@ import { jwtDecode } from "jwt-decode";
 
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
-function FoodCard({ id, name, price, img, rating, desc, stock, PQunatity }) {
+function FoodCard({
+  id,
+  name,
+  price,
+  img,
+  rating,
+  desc,
+  stock,
+  PQunatity,
+  isBestSeller,
+}) {
   const dispatch = useDispatch();
 
-   const token = localStorage.getItem("token");
-   let userid = null;
+  const token = localStorage.getItem("token");
+  let userid = null;
 
-   if (token && typeof token === "string") {
-     try {
-       const decode = jwtDecode(token);
-       userid = decode.userid; // Get the userid from the decoded token
-     } catch (error) {
-       console.error("Error decoding token:", error);
-       toast.error("Invalid or expired token.");
-     }
-   }
+  if (token && typeof token === "string") {
+    try {
+      const decode = jwtDecode(token);
+      userid = decode.userid; // Get the userid from the decoded token
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      toast.error("Invalid or expired token.");
+    }
+  }
 
   const qty = 1;
   const [showMore, setShowMore] = useState(false);
-   const [productQuantity, setProductQuantity] = useState(0);
+  const [productQuantity, setProductQuantity] = useState(0);
   const [totalProductQuantity, setTotalProductQuantity] = useState(0);
-  
+
   useEffect(() => {
     const fetchTotalProductQuantity = async () => {
       try {
         const response = await axios.get(`${APP_URL}/Products/${id}`);
         if (response.status === 200) {
           setTotalProductQuantity(response.data.totalProductQuantity);
-           //console.log(response.data);
+          //console.log(response.data);
         } else {
           toast.error("Error fetching product data.");
         }
@@ -60,12 +70,12 @@ function FoodCard({ id, name, price, img, rating, desc, stock, PQunatity }) {
       PQunatity: qty,
     };
     // Check every time if we click add to cart button
-    
+
     if (productQuantity >= totalProductQuantity) {
       toast.error("Cannot add more items than available in stock.");
       return;
     }
-      //console.log("hello",productQuantity)
+    //console.log("hello",productQuantity)
     try {
       dispatch(addToCart(cartItem));
       await axios.post(`${APP_URL}/Carts`, cartItem);
@@ -78,25 +88,29 @@ function FoodCard({ id, name, price, img, rating, desc, stock, PQunatity }) {
     }
   };
   //stock check
-   const isOutOfStock = stock === 0;
+  const isOutOfStock = stock === 0;
   const isLowStock = stock > 0 && stock <= 3;
 
   //implement show more options
-   const shortDesc = desc?.length > 21 ? desc.slice(0, 21) + "..." : desc;
+  const shortDesc = desc?.length > 21 ? desc.slice(0, 21) + "..." : desc;
 
-  
   return (
-    <div className="font-bold w-[250px] bg-white p-5 flex flex-col rounded-lg gap-2 text-gray-900 dark:bg-orange-200">
+    <div className="relative font-bold w-[250px] bg-white p-5 flex flex-col rounded-lg gap-2 text-gray-900 dark:bg-orange-200">
       <img
         src={img}
         alt=""
         className="w-auto h-[130px] hover:scale-110 cursor-grab rounded-lg tranistion-all duration-500 ease-in-out "
       />
+      {isBestSeller && (
+        <span className="absolute top-2 left-2 bg-yellow-400 text-white text-xs font-semibold px-2 py-1 rounded shadow">
+          Best Seller
+        </span>
+      )}
       <div className="text-sm flex justify-between">
         <h2>{name}</h2>
         <span className="text-green-500">₹{price}</span>
       </div>
-      
+
       {/*describetion show */}
       <div>
         <p className="text-sm font-normal">{showMore ? desc : shortDesc}</p>
