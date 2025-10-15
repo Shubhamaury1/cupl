@@ -5,9 +5,6 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import ThemeController from "./ThemeController";
 import { FaSearch } from "react-icons/fa";
-import Loginenewpage from "./Loginenewpage";
-//import Login from "./Login";
-// import Logout from "./Logout";
 
 function Navbar() {
   const dispatch = useDispatch();

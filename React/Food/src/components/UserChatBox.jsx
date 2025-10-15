@@ -156,109 +156,130 @@ import { jwtDecode } from "jwt-decode";
 function UserChatBox() {
   const token = localStorage.getItem("token");
   const [userId, setUserId] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [adminId, setAdminId] = useState(null); // Dynamic admin ID
-
-  useEffect(() => {
-    if (token && typeof token === "string") {
-      try {
-        const decoded = jwtDecode(token);
-
-        if (decoded.userid) setUserId(decoded.userid);
-        if (decoded.isAdmin !== undefined) {
-          const admin =
-            decoded.isAdmin === true ||
-            decoded.isAdmin === "True" ||
-            decoded.isAdmin === "true" ||
-            decoded.isAdmin === 1;
-          setIsAdmin(admin);
-        }
-
-        // Set admin ID from token (assuming token contains it)
-        if (decoded.adminid) {
-          setAdminId(decoded.adminid);
-        } else {
-          // Fallback to default admin if not present
-          setAdminId("55");
-        }
-
-        console.log("UserId:", decoded.userid, "AdminId:", decoded.adminid);
-      } catch (err) {
-        console.error("Invalid token:", err);
-      }
-    } else {
-      console.warn("No token found in localStorage");
-    }
-  }, [token]);
-
+  const [adminId, setAdminId] = useState("55"); // default admin
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
   const connectionRef = useRef(null);
   const messagesEndRef = useRef(null);
 
+  // Decode token
+  useEffect(() => {
+    if (!token) return;
+    try {
+      const decoded = jwtDecode(token);
+      setUserId(decoded.userid);
+      if (decoded.adminid) setAdminId(decoded.adminid);
+    } catch (err) {
+      console.error("Invalid token", err);
+    }
+  }, [token]);
+
+  // Fetch unread messages count from server
+  const fetchUnreadCount = () => {
+    if (!userId || !adminId) return;
+    fetch(`https://localhost:7076/api/chat/unreadcount/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const adminUnread = data.find((u) => u.userId === adminId);
+        setUnreadCount(adminUnread ? adminUnread.count : 0);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  // Fetch chat history
+  const fetchChatHistory = () => {
+    if (!userId || !adminId) return;
+    fetch(`https://localhost:7076/api/chat/history/${userId}/${adminId}`)
+      .then((res) => res.json())
+      .then((data) => setMessages(data))
+      .catch((err) => console.error(err));
+  };
+
+  // Mark messages as read
+  const markAsRead = () => {
+    if (!userId || !adminId) return;
+    fetch(`https://localhost:7076/api/chat/markread/${userId}/${adminId}`, {
+      method: "POST",
+    })
+      .then(() => setUnreadCount(0))
+      .catch((err) => console.error(err));
+  };
+
   // SignalR connection
   useEffect(() => {
-    if (!userId || isAdmin || !adminId) return;
+    if (!userId || !adminId) return;
 
     const conn = new signalR.HubConnectionBuilder()
       .withUrl(`https://localhost:7076/chatHub?userId=${userId}`)
       .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Information)
       .build();
 
-    conn
-      .start()
-      .then(() => {
-        console.log("✅ Connected to SignalR Hub");
-
-        // Load chat history dynamically with adminId
-        fetch(`https://localhost:7076/api/chat/history/${userId}/${adminId}`)
-          .then((res) => res.json())
-          .then((data) => setMessages(data))
-          .catch((err) => console.error("Error fetching chat history:", err));
-      })
-      .catch((err) => console.error("SignalR connection error:", err));
+    conn.start().then(() => {
+      console.log("Connected to SignalR Hub");
+      fetchChatHistory();
+      fetchUnreadCount();
+    });
 
     conn.on("ReceiveMessage", (msg) => {
-      setMessages((prev) => [...prev, msg]);
+      if (msg.senderId === adminId) {
+        if (isOpen) {
+          setMessages((prev) => [...prev, msg]);
+          markAsRead();
+        } else {
+          setUnreadCount((prev) => prev + 1);
+        }
+      } else {
+        setMessages((prev) => [...prev, msg]);
+      }
     });
 
     connectionRef.current = conn;
     return () => conn.stop();
-  }, [userId, isAdmin, adminId]);
+  }, [userId, adminId, isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || !userId || !adminId) return;
-    try {
-      await connectionRef.current.invoke("SendMessage", userId, adminId, input);
-      setInput("");
-    } catch (err) {
-      console.error("SendMessage error:", err);
+    if (!input.trim()) return;
+    await connectionRef.current.invoke("SendMessage", userId, adminId, input);
+    setInput("");
+  };
+
+  const toggleChat = () => {
+    setIsOpen((prev) => !prev);
+    if (!isOpen) {
+      // when opening chat, fetch history and mark as read
+      fetchChatHistory();
+      markAsRead();
     }
   };
 
-  if (isAdmin) return null; // Hide chat box for admins
-
   return (
     <>
+      {/* Chat Icon */}
       <div
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleChat}
         className="fixed bottom-5 left-4 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-700 z-50"
       >
         💬
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+            {unreadCount}
+          </span>
+        )}
       </div>
 
+      {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-20 left-5 bg-white border shadow-lg rounded-lg w-80 h-96 flex flex-col z-50">
           <div className="bg-blue-600 text-white p-3 rounded-t flex justify-between items-center">
             <span className="font-semibold">Customer Support</span>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={toggleChat}
               className="text-white hover:text-gray-200"
             >
               ✖
@@ -266,24 +287,30 @@ function UserChatBox() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                className={`mb-2 ${
-                  m.senderId === userId ? "text-right" : "text-left"
-                }`}
-              >
-                <span
-                  className={`inline-block px-3 py-2 rounded-lg text-sm ${
-                    m.senderId === userId
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-black"
+            {messages.length === 0 ? (
+              <p className="text-gray-500 text-center mt-20">
+                No messages yet.
+              </p>
+            ) : (
+              messages.map((m, i) => (
+                <div
+                  key={i}
+                  className={`mb-2 ${
+                    m.senderId === userId ? "text-right" : "text-left"
                   }`}
                 >
-                  {m.message}
-                </span>
-              </div>
-            ))}
+                  <span
+                    className={`inline-block px-3 py-2 rounded-lg text-sm ${
+                      m.senderId === userId
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-black"
+                    }`}
+                  >
+                    {m.message}
+                  </span>
+                </div>
+              ))
+            )}
             <div ref={messagesEndRef} />
           </div>
 
