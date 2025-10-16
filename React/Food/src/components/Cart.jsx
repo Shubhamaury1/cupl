@@ -53,7 +53,8 @@ function Cart() {
             My Order
           </span>
           <IoMdClose
-            onClick={() => setActiveCart(!activeCart)}
+            //onClick={() => setActiveCart(!activeCart)}
+            onClick={() => setActiveCart(false)}
             className="border-2 border-gray-600 text-gray-600 font-bold p-1 text-2xl rounded-md hover:text-red-300 hover:border-red-300 cursor-pointer dark:text-red-400 "
           />
         </div>
@@ -103,7 +104,7 @@ function Cart() {
         </div>
       </div>
 
-      <FaShoppingCart
+      {/* <FaShoppingCart
         onClick={() => {
           if (!isLoggedIn) {
             navigate("/loginenewpage");
@@ -111,10 +112,60 @@ function Cart() {
             setActiveCart(!activeCart);
           }
         }}
-        className={`rounded-full bg-white shadow-md text-6xl p-3 fixed bottom-8 right-4 text-gray-900 dark:text-white dark:bg-gray-800 ${
+        className={`rounded-full bg-white shadow-md text-6xl p-3 fixed top-11 right-4 text-gray-900 dark:text-white dark:bg-gray-800 ${
           totalQty > 0 && "animate-bounce delay-500 transition-all duration-500"
         }`}
-      />
+      /> */}
+
+      {/* <div className="fixed top-11 right-4 z-50">
+        <div className="relative">
+          <FaShoppingCart
+            onClick={() => {
+              if (!isLoggedIn) {
+                navigate("/loginenewpage");
+              } else {
+                setActiveCart(!activeCart);
+              }
+            }}
+            className={`rounded-full bg-white shadow-md text-6xl p-3 text-gray-900 dark:text-white dark:bg-gray-800 cursor-pointer ${
+              totalQty > 0 &&
+              "animate-bounce delay-500 transition-all duration-500"
+            }`}
+          />
+
+          {totalQty > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+              {totalQty}
+            </span>
+          )}
+        </div>
+      </div> */}
+
+      {!activeCart && (
+        <div className="fixed top-11 right-4 z-50">
+          <div className="relative">
+            <FaShoppingCart
+              onClick={() => {
+                if (!isLoggedIn) {
+                  navigate("/loginenewpage");
+                } else {
+                  setActiveCart(true); // only open
+                }
+              }}
+              className={`rounded-full bg-white shadow-md text-6xl p-3 text-gray-900 dark:text-white dark:bg-gray-800 cursor-pointer ${
+                totalQty > 0 &&
+                "animate-bounce delay-500 transition-all duration-500"
+              }`}
+            />
+
+            {totalQty > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+                {totalQty}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

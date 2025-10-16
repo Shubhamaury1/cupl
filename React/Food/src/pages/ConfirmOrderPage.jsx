@@ -15,11 +15,13 @@ function ConfirmOrderPage() {
 
   // Fetching address data from API
   useEffect(() => {
-
     const fetchAddress = async () => {
+      const token = localStorage.getItem("token");
+      const decode = jwtDecode(token);
+      const userid = decode.userid
       try {
         const response = await axios.get(
-          `${APP_URL}/Addresses`
+          `${APP_URL}/Addresses/${userid}`
         );
         setAddress(response.data); // Store the fetched address list
       } catch (error) {

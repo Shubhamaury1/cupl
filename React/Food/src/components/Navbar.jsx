@@ -57,7 +57,7 @@ function Navbar() {
           <NavLink to="/loginenewpage">
             <FaRegUserCircle
               size={60}
-              className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 "
+              className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 mr-12"
             />
           </NavLink>
         </div>

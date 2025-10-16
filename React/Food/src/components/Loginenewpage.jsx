@@ -22,7 +22,7 @@ function Loginenewpage() {
     return "";
   };
 
-  const [currentPage, setCurrentPage] = useState("welcome");
+  const [currentPage, setCurrentPage] = useState("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("orderHistory");
   const [username, setUsername] = useState(initialUsername);
@@ -66,7 +66,7 @@ function Loginenewpage() {
         const decoded = jwtDecode(response.data.token);
         setUsername(decoded.username || loginData.username); // fallback
         setIsLoggedIn(true);
-        setCurrentPage("home");
+        navigate("/");
         toast.success("Login successful!");
       }
     } catch (error) {
@@ -258,114 +258,176 @@ function Loginenewpage() {
     </div>
   );
 
-  // Welcome Page
-  const renderWelcome = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800">
-        Welcome to BiteMeBaby!
-      </h1>
-      <div className="space-x-4">
-        <button
-          onClick={() => setCurrentPage("login")}
-          className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => setCurrentPage("register")}
-          className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Register
-        </button>
+  const renderLogin = () => (
+    <div className="flex min-h-screen text-gray-800 ">
+      {/* Left Panel */}
+      <div className="w-full md:w-1/2 flex justify-center items-center bg-gary-200 p-8">
+        <div className="w-full max-w-md rounded-lg shadow-lg shadow-pink-500">
+          <h1 className="text-4xl font-bold mb-6 text-pink-500 text-center mt-8">
+            AllDayEats
+          </h1>
+          <h2 className="text-xl font-semibold mb-2 text-center ">
+            Welcome Back
+          </h2>
+          <form
+            onSubmit={handleLogin}
+            className="flex flex-col space-y-6 mt-10"
+          >
+            <div>
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                placeholder="john..."
+                value={loginData.username}
+                onChange={(e) =>
+                  setLoginData({ ...loginData, username: e.target.value })
+                }
+                required
+                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+              />
+            </div>
+
+            <div>
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="123@.."
+                value={loginData.password}
+                onChange={(e) =>
+                  setLoginData({ ...loginData, password: e.target.value })
+                }
+                required
+                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-[310px] bg-pink-500 text-white py-2 rounded hover:bg-pink-600 transition"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <p className="ml-14 text-sm mt-4 text-gray-700 mb-6">
+            Don’t have an account?{" "}
+            <a
+              onClick={() => setCurrentPage("register")}
+              className="text-blue-600 hover:underline"
+            >
+              Sign Up
+            </a>
+          </p>
+        </div>
+      </div>
+
+      {/* Right Panel - Background Image */}
+      <div className="hidden md:block md:w-1/2 bg-cover bg-center">
+        <img src="src/assets/Order food-pana.png" alt="" />
       </div>
     </div>
   );
 
-  const renderLogin = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Login</h2>
-      <form
-        onSubmit={handleLogin}
-        className="flex flex-col item-center bg-white p-10 rounded-md shadow-md"
-      >
-        <div className="p-2">
-          <label className="text-gray-800">Username</label>
-          <input
-            type="text"
-            name="username"
-            placeholder="Enter Username"
-            value={loginData.username}
-            onChange={(e) =>
-              setLoginData({ ...loginData, username: e.target.value })
-            }
-            required
-            className="w-full mt-1 p-2 border rounded bg-white text-gray-800"
-          />
-        </div>
-        <div className="p-2">
-          <label className="text-gray-800">Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter Password"
-            value={loginData.password}
-            onChange={(e) =>
-              setLoginData({ ...loginData, password: e.target.value })
-            }
-            required
-            className="w-full mt-1 p-2 border rounded bg-white text-gray-800"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-      </form>
-    </div>
-  );
-
   const renderRegister = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Register</h2>
-      <form
-        onSubmit={handleRegister}
-        className="flex flex-col item-center bg-white p-10 rounded-md shadow-md w-full max-w-md"
-      >
-        {[
-          ["Username", "username"],
-          ["Email", "email"],
-          ["Password", "password", "password"],
-        ].map(([label, name, type = "text"]) => (
-          <div key={name}>
-            <label className="block mt-3 text-gray-800">{label}</label>
-            <input
-              type={type}
-              name={name}
-              value={registerData[name]}
-              onChange={(e) =>
-                setRegisterData({ ...registerData, [name]: e.target.value })
-              }
-              required
-              className="w-full border px-3 py-2 rounded bg-white text-gray-800"
-            />
-          </div>
-        ))}
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 mt-5"
-        >
-          Register
-        </button>
-      </form>
+    <div className="flex min-h-screen text-gray-800">
+      {/* Left - Form */}
+      <div className="w-full md:w-1/2 flex justify-center items-center bg-white bg-gray-200 p-8">
+        <div className="w-full max-w-md rounded-lg shadow-lg shadow-pink-500">
+          <h1 className="text-4xl font-bold mb-6 text-pink-500 text-center mt-8">
+            AllDayEats
+          </h1>
+          <h2 className="text-xl font-semibold mb-2 text-center ">
+            Create Account
+          </h2>
+
+          <form
+            onSubmit={handleRegister}
+            className="flex flex-col space-y-6 mt-10"
+          >
+            {/* Username */}
+            <div>
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                value={registerData.username}
+                onChange={(e) =>
+                  setRegisterData({ ...registerData, username: e.target.value })
+                }
+                required
+                placeholder="your_username"
+                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={registerData.email}
+                onChange={(e) =>
+                  setRegisterData({ ...registerData, email: e.target.value })
+                }
+                required
+                placeholder="you@example.com"
+                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={registerData.password}
+                onChange={(e) =>
+                  setRegisterData({ ...registerData, password: e.target.value })
+                }
+                required
+                placeholder="********"
+                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-[310px] bg-pink-500 text-white py-2 rounded hover:bg-pink-600 transition"
+            >
+              Register
+            </button>
+          </form>
+
+          <p className="ml-14 text-sm mt-4 text-gray-700 mb-6">
+            Already have an account?{" "}
+            <a
+              onClick={() => setCurrentPage("login")}
+              className="text-blue-600 hover:underline"
+            >
+              Sign In
+            </a>
+          </p>
+        </div>
+      </div>
+
+      {/* Right - Image */}
+      <div className="hidden md:block md:w-1/2 bg-cover bg-center">
+        <img src="src/assets/Order food-pana.png" alt="" />
+      </div>
     </div>
   );
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      {currentPage === "welcome" && renderWelcome()}
+      {/* {currentPage === "welcome" && renderWelcome()} */}
       {currentPage === "login" && renderLogin()}
       {currentPage === "register" && renderRegister()}
       {currentPage === "home" && isLoggedIn && renderHome()}
