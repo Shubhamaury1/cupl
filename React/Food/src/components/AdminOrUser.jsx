@@ -14,7 +14,11 @@ function AdminOrUser() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${APP_URL}/Users`);
+        const response = await axios.get(`${APP_URL}/Users`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         setUsers(response.data);
       } catch (err) {
         toast.error("Failed to fetch users");
@@ -60,7 +64,11 @@ function AdminOrUser() {
         };
 
         // Send updated user to the backend
-        await axios.put(`${APP_URL}/Users/${userToUpdate.id}`, updatedUser);
+        await axios.put(`${APP_URL}/Users/${userToUpdate.id}`, updatedUser, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         // Update the users list locally after successful update
         setUsers((prevUsers) =>

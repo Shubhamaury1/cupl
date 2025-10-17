@@ -11,6 +11,7 @@ import Loginenewpage from "./components/Loginenewpage";
 import OrderDetails from "./pages/OrderDetails";
 import ConfirmOrderPage from "./pages/ConfirmOrderPage";
 import Admin from "./pages/Admin";
+import RegisterWithOtp from "./components/RegisterWithOtp";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/registerwithotp" element={<RegisterWithOtp/> } />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

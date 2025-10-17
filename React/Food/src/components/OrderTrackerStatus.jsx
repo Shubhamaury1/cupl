@@ -9,25 +9,10 @@ function OrderTrackerStatus() {
   const [selectedOrder, setSelectedOrder] = useState("");
   const [status, setStatus] = useState("");
   const [newStatus, setNewStatus] = useState("");
-
-  // Fetch all orders
-  // useEffect(() => {
-  //   const fetchOrders = async () => {
-  //     try {
-  //       const response = await axios.get(`${APP_URL}/OrdersControllers`);
-  //       setOrders(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //       toast.error("Failed to load orders");
-  //     }
-  //   };
-  //   fetchOrders();
-  // }, []);
-
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${APP_URL}/OrdersControllers`);
+        const response = await axios.get(`${APP_URL}/OrdersControllers`,{headers:{Authorization:`bearer ${localStorage.getItem("token")}`}});
 
         // Filter out orders that are already Delivered
         const filteredOrders = response.data.filter((order) => {
@@ -54,7 +39,7 @@ function OrderTrackerStatus() {
       const fetchOrder = async () => {
         try {
           const res = await axios.get(
-            `${APP_URL}/OrdersControllers/order/${selectedOrder}`
+            `${APP_URL}/OrdersControllers/order/${selectedOrder}`,{headers:{Authorization: `Bearer ${localStorage.getItem("token")}`}}
           );
 
           const trackers = res.data.trackers || [];
@@ -84,7 +69,10 @@ function OrderTrackerStatus() {
     try {
       await axios.put(`${APP_URL}/OrderTrackers/${selectedOrder}/status`, {
         status: newStatus,
-      });
+      },{
+        headers: {
+        Authorization:`Bearer ${localStorage.getItem("token")}`
+      }});
       setStatus(newStatus);
       toast.success("Order status updated");
     } catch (err) {

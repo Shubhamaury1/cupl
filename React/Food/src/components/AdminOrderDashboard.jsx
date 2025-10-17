@@ -10,7 +10,11 @@ function AdminOrderDashboard() {
     const fetchDashboardData = async () => {
       try {
         //Fetch total order
-        const response = await axios.get(`${APP_URL}/OrdersControllers`);
+        const response = await axios.get(`${APP_URL}/OrdersControllers`, {
+          headers: {
+            Authorization:`Bearer ${localStorage.getItem("token")}`
+          }
+        });
         //console.log("order history", response.data);
         setOrders(response.data);
 

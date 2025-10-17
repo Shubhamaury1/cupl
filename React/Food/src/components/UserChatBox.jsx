@@ -3,15 +3,27 @@ import * as signalR from "@microsoft/signalr";
 import { jwtDecode } from "jwt-decode";
 
 function UserChatBox() {
+
   const token = localStorage.getItem("token");
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
+  const ADMIN_ID = "55"; // your admin id from DB
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const connectionRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
     useEffect(() => {
       if (token) {
         try {
           const decoded = jwtDecode(token);
+          const loggedIn = decoded.isLoggedIn === "true" || decoded.isLoggedIn === true
+          if (loggedIn) {
+            setIsLoggedIn(true)
+          }
           setUserId(decoded.userid);
-          console.log("UserId is",decoded)
+          //console.log("UserId is",decoded)
         } catch (err) {
           console.error("Invalid token:", err);
         }
@@ -20,12 +32,6 @@ function UserChatBox() {
       }
     }, [token]);
 
-  const ADMIN_ID = "55"; // your admin id from DB
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const connectionRef = useRef(null);
-  const messagesEndRef = useRef(null);
 
   //SignalR connection
   useEffect(() => {
@@ -80,12 +86,21 @@ function UserChatBox() {
   return (
     <>
       {/* Floating Button */}
-      <div
+      {/* <div
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-5 right-5 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-700 z-50"
       >
         💬
-      </div>
+      </div> */}
+
+      {isLoggedIn === true && (
+        <div
+          onClick={() => setIsOpen(!isOpen)}
+          className="fixed bottom-5 right-5 bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg cursor-pointer hover:bg-blue-700 z-50"
+        >
+          💬
+        </div>
+      )}
 
       {/* Chat Popup */}
       {isOpen && (

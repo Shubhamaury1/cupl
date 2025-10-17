@@ -191,12 +191,11 @@ function Address() {
       return;
     }
     try {
-      await axios.delete(`${APP_URL}/Addresses/${userid}`),
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+      await axios.delete(`${APP_URL}/Addresses/${userid}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
       const updatedList = addressList.filter((_, i) => i !== index);
       setAddressList(updatedList);
       toast.success("Address deleted!");

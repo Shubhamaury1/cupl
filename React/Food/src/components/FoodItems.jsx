@@ -23,7 +23,9 @@ function FoodItems() {
   useEffect(() => {
     const fetchBestSellers = async () => {
       try {
-        const res = await axios.get(`${APP_URL}/OrdersControllers/bestseller`);
+        const res = await axios.get(`${APP_URL}/OrdersControllers/bestseller`, {
+          headers:{Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
         if (res.status === 200) {
           setBestSellerFoods(res.data);
         }
@@ -44,7 +46,9 @@ function FoodItems() {
             pageSize: 100, // Fetch all page
             searchTerm: search,
             category: selectedCategory === "All" ? null : selectedCategory,
-          },
+          }, headers:{
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         });
 
         if (response.status === 200) {

@@ -17,12 +17,12 @@ import { jwtDecode } from "jwt-decode";
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
-  
- // In your Admin page component
+
+  // In your Admin page component
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     const decode = jwtDecode(token);
-    const isAdmin = decode.isAdmin === "True" ||decode.isAdmin===true;
+    const isAdmin = decode.isAdmin === "True" || decode.isAdmin === true;
     if (!isAdmin) {
       toast.error("Access denied");
       navigate("/"); // redirect to home
@@ -129,7 +129,7 @@ const FileUpload = () => {
     category: "",
     rating: "",
     totalProductQuantity: "",
-    isactive:"",
+    isactive: "",
     file: null,
   });
   const [totalPages, setTotalPages] = useState(1);
@@ -168,6 +168,9 @@ const FileUpload = () => {
             pageSize: itemsPerPage,
             searchTerm: search,
             category: selectedCategory === "All" ? null : selectedCategory,
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         if (response.status === 200) {
@@ -243,7 +246,7 @@ const FileUpload = () => {
     fd.append("description", formData.description);
     fd.append("category", formData.category);
     fd.append("totalProductQuantity", formData.totalProductQuantity);
-    fd.append("isactive",formData.isactive);
+    fd.append("isactive", formData.isactive);
     fd.append("rating", formData.rating);
     if (formData.file) {
       fd.append("file", formData.file);
@@ -254,10 +257,19 @@ const FileUpload = () => {
       if (formData.id) {
         postResponse = await axios.put(
           `${APP_URL}/FileUpload/${formData.id}`,
-          fd
+          fd,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
       } else {
-        postResponse = await axios.post(`${APP_URL}/FileUpload/`, fd);
+        postResponse = await axios.post(`${APP_URL}/FileUpload/`, fd, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
       }
 
       if (postResponse.status === 200) {
@@ -287,7 +299,7 @@ const FileUpload = () => {
           category: "",
           rating: "",
           totalProductQuantity: "",
-          isactive:"",
+          isactive: "",
           file: null,
         });
       } else {
@@ -626,7 +638,6 @@ const FileUpload = () => {
 const ChatDashboard = () => (
   <div className="text-gray-800">
     <AdminChatBox></AdminChatBox>
-   
   </div>
 );
 

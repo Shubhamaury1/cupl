@@ -10,7 +10,7 @@ function AdminMainPanel() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${APP_URL}/OrdersControllers`);
+        const response = await axios.get(`${APP_URL}/OrdersControllers`, { headers: { Authorization:`Bearer ${localStorage.getItem("token")}`}});
         //console.log("fetch data are", response.data);
         setOrders(response.data);
         setLoading(false);

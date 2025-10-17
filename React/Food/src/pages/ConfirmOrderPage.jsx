@@ -21,7 +21,9 @@ function ConfirmOrderPage() {
       const userid = decode.userid
       try {
         const response = await axios.get(
-          `${APP_URL}/Addresses/${userid}`
+          `${APP_URL}/Addresses/${userid}`, {
+            headers:{Authorization: `Bearer ${token}`}
+          }
         );
         setAddress(response.data); // Store the fetched address list
       } catch (error) {
@@ -61,10 +63,10 @@ function ConfirmOrderPage() {
 
     const token = localStorage.getItem("token");
     const decode = jwtDecode(token);
-    const userid = decode.userid;           
+    const userid = decode.userid;
     // Prepare the order data
     const newOrder = {
-      uId: userid, // Replace with actual user ID if needed
+      uId: userid,
       addressId: selectedAddress.id,
       paymentMethod,
     };
@@ -159,3 +161,4 @@ function ConfirmOrderPage() {
 }
 
 export default ConfirmOrderPage;
+
