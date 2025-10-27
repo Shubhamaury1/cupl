@@ -20,7 +20,6 @@ function OrderDetails() {
           `${APP_URL}/OrdersControllers/order/${id}`
         );
         if (response.status === 200) {
-          //console.log("tracker", response.data);
           setOrder(response.data);
         } else {
           console.log("Failed to fetch order details.");
@@ -55,7 +54,8 @@ function OrderDetails() {
   "Out for Delivery",
   "Delivered",
 ];
-const currentStep = steps.indexOf(tracker.status);  
+  const currentStep = steps.indexOf(tracker.status);  
+  
   const downloadInvoice = () => {
     // check if order is exist or not
     if (!order) {
@@ -82,7 +82,16 @@ const currentStep = steps.indexOf(tracker.status);
     doc.setFontSize(12);
     doc.text(`Invoice Number: ${order.id}`, 20, 35);
     doc.text(`Invoice Date: ${order.orderDate}`, 20, 40);
-    doc.text(`Payment Method: Cash On Delivery`, 20, 45);
+
+    // Format the payment method like in your JSX
+    const formattedPaymentMethod = order.paymentMethod
+      ? order.paymentMethod
+          .replace(/([A-Z])/g, " $1") // Add space before capital letters
+          .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+      : "N/A";
+    doc.text(`Payment Method: ${formattedPaymentMethod}`, 20, 45);
+
+    //doc.text(`Payment Method: ${order.paymentMethod}`, 20, 45);
     doc.text(`Status: ${tracker.status}`, 150, 45);
 
     // Draw a line separating the section
@@ -255,7 +264,14 @@ const currentStep = steps.indexOf(tracker.status);
             </p>
             <p>
               <strong className="dark:text-pink-200">Payment Method:</strong>{" "}
-              <span className="dark:text-white"> Cash On Delivery</span>
+              {/* <span className="dark:text-white">{order.paymentMethod}</span> */}
+              <span className="dark:text-white">
+                {order.paymentMethod
+                  ? order.paymentMethod
+                      .replace(/([A-Z])/g, " $1") // add space before capital letters
+                      .replace(/^./, (str) => str.toUpperCase()) // capitalize first letter
+                  : ""}
+              </span>
             </p>
           </div>
           <div>
@@ -327,7 +343,6 @@ const currentStep = steps.indexOf(tracker.status);
           </div>
         </div>
       </section>
-
     </div>
   );
 }
@@ -335,298 +350,3 @@ export default OrderDetails;
 
 
 
-
-
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// const APP_URL = import.meta.env.VITE_LOCAL_URL;
-// import { useParams } from "react-router-dom";
-// import jsPDF from "jspdf";
-// import logo from "../assets/chef.png";
-
-// function OrderDetails() {
-//   const [order, setOrder] = useState(null);
-//   const { id } = useParams();
-
-//   useEffect(() => {
-//     if (!id) {
-//       console.log("Order ID is missing.");
-//       return;
-//     }
-//     const fetchOrderDetails = async () => {
-//       try {
-//         const response = await axios.get(
-//           `${APP_URL}/OrdersControllers/order/${id}`
-//         );
-//         if (response.status === 200) {
-//           setOrder(response.data);
-//         } else {
-//           console.log("Failed to fetch order details.");
-//         }
-//       } catch (error) {
-//         console.error("Error fetching order details:", error);
-//       }
-//     };
-//     fetchOrderDetails();
-//   }, [id]);
-
-//   if (!order) {
-//     return <p className="p-8 text-gray-700">No order details available.</p>;
-//   }
-
-//   // Parse the address string into separate components
-//   const addressFields = order.address.split(",").reduce((acc, field) => {
-//     const [key, value] = field.split(":").map((item) => item.trim());
-//     if (key && value) {
-//       acc[key] = value;
-//     }
-//     return acc;
-//   }, {});
-
-//   const tracker =
-//     order.trackers && order.trackers.length > 0
-//       ? order.trackers[order.trackers.length - 1]
-//       : { status: "Pending", date: "20-09-2025" };
-
-//   // Helper function to determine which steps have been completed
-//   const steps = [
-//     "Pending",
-//     "Confirmed",
-//     "Dispatched",
-//     "Out for Delivery",
-//     "Delivered",
-//   ];
-//   const currentStep = steps.indexOf(tracker.status);
-
-//   // Function to generate the invoice PDF
-//   const downloadInvoice = () => {
-//     if (!order) {
-//       console.log("Order data not available");
-//       return;
-//     }
-
-//     const doc = new jsPDF();
-//     const img = new Image();
-//     img.src = logo;
-
-//     doc.setFontSize(20);
-//     doc.text("AllDayEats", 20, 20);
-//     doc.setFontSize(18);
-//     doc.text("Invoice", 100, 20);
-//     doc.addImage(img, "png", 160, 10, 20, 20);
-
-//     doc.setFontSize(12);
-//     doc.text(`Invoice Number: ${order.id}`, 20, 35);
-//     doc.text(`Invoice Date: ${order.orderDate}`, 20, 40);
-//     doc.text(`Payment Method: Cash On Delivery`, 20, 45);
-//     doc.text(`Status: ${tracker.status}`, 150, 45);
-//     doc.line(20, 55, 190, 55);
-
-//     doc.setFontSize(14);
-//     doc.text("Billing Address:", 20, 65);
-//     doc.setFontSize(12);
-//     doc.text(`Name: ${addressFields["Name"]}`, 20, 70);
-//     doc.text(`Phone: ${addressFields["Phone"]}`, 20, 75);
-//     doc.text(`Address Type: ${addressFields["Type"]}`, 20, 80);
-//     doc.text(
-//       `Address: ${addressFields["House No"]}, ${addressFields["Landmark"]}, ${addressFields["City"]}, ${addressFields["Region"]} - ${addressFields["PinCode"]}`,
-//       20,
-//       85
-//     );
-//     doc.line(20, 90, 190, 90);
-
-//     doc.setFontSize(14);
-//     doc.text("Shipping Address:", 20, 100);
-//     doc.setFontSize(12);
-//     doc.text(`Name: ${addressFields["Name"]}`, 20, 105);
-//     doc.text(`Phone: ${addressFields["Phone"]}`, 20, 110);
-//     doc.text(`Address Type: ${addressFields["Type"]}`, 20, 115);
-//     doc.text(
-//       `Address: ${addressFields["House No"]}, ${addressFields["Landmark"]}, ${addressFields["City"]}, ${addressFields["Region"]} - ${addressFields["PinCode"]}`,
-//       20,
-//       120
-//     );
-//     doc.line(20, 130, 190, 130);
-
-//     doc.setFontSize(14);
-//     doc.text("Ordered Item(s):", 20, 140);
-//     doc.setFontSize(12);
-//     const startY = 150;
-//     const headerHeight = 10;
-//     const rowHeight = 10;
-//     const colWidths = [90, 40, 40];
-//     doc.setFillColor(200, 200, 200);
-//     doc.rect(20, startY, colWidths[0], headerHeight, "F");
-//     doc.rect(110, startY, colWidths[1], headerHeight, "F");
-//     doc.rect(150, startY, colWidths[2], headerHeight, "F");
-
-//     doc.setTextColor(0, 0, 0);
-//     doc.text("Product", 25, startY + 7);
-//     doc.text("Quantity", 115, startY + 7);
-//     doc.text("Price", 155, startY + 7);
-//     doc.rect(20, startY, 170, headerHeight);
-
-//     let currentY = startY + headerHeight;
-//     doc.text(order.productName, 25, currentY + 7);
-//     doc.text(order.orderQuantity.toString(), 120, currentY + 7);
-//     doc.text(order.productPrice.toFixed(2), 155, currentY + 7);
-//     doc.rect(20, currentY, 170, rowHeight);
-
-//     currentY += rowHeight;
-//     doc.line(20, currentY, 190, currentY);
-
-//     doc.setFontSize(14);
-//     doc.setFont("helvetica", "bold");
-//     doc.text(`Total Price: ${order.totalPrice.toFixed(2)}`, 20, currentY + 10);
-//     doc.save(`Invoice_${order.id}.pdf`);
-//   };
-
-//   return (
-//     <div className="flex flex-col max-w-4xl mx-auto p-6 text-gray-800 h-screen">
-//       <div className="flex justify-between items-center mb-6">
-//         <h1 className="text-3xl font-bold border-b pb-2 dark:text-green-500">
-//           Order Details
-//         </h1>
-//         <button
-//           onClick={downloadInvoice}
-//           type="button"
-//           className="text-white bg-blue-500 rounded-lg py-2 px-4"
-//         >
-//           Download Invoice
-//         </button>
-//       </div>
-
-//       {/* Order Status Bar */}
-//       <div className="mb-6">
-//         <div className="flex justify-between items-center relative">
-//           {steps.map((step, index) => {
-//             const isActive = index <= currentStep;
-//             return (
-//               <div key={index} className="flex-1 text-center relative">
-//                 {/* Circle */}
-//                 <div
-//                   className={`w-8 h-8 rounded-full mx-auto mb-2 ${
-//                     isActive ? "bg-green-500" : "bg-gray-300"
-//                   } flex items-center justify-center`}
-//                 >
-//                   {/* Conditional Checkmark or "OK" Text */}
-//                   {isActive && (
-//                     <span className="text-white text-lg font-semibold">✓</span>
-//                     // Or you can use text "OK" instead of check mark like this:
-//                     // <span className="text-white text-sm font-semibold">OK</span>
-//                   )}
-//                 </div>
-//                 <p
-//                   className={`text-sm ${
-//                     isActive ? "text-green-500" : "text-gray-500"
-//                   }`}
-//                 >
-//                   {step}
-//                 </p>
-
-//                 {/* Center Line */}
-//                 {index < steps.length - 1 && (
-//                   <div
-//                     className={`absolute top-1/2 left-0 right-0 h-1 ${
-//                       isActive ? "bg-green-500" : "bg-gray-300"
-//                     }`}
-//                     style={{
-//                       width: "calc(100% - 2rem)", // Space between circles
-//                       top: "25%", // Center the line in the middle of the circle
-//                       left: "100%", // Position the line in the center of the circle
-//                       transform: "translateX(-50%)", // Ensure the line is centered
-//                     }}
-//                   ></div>
-//                 )}
-//               </div>
-//             );
-//           })}
-//         </div>
-//       </div>
-
-//       {/* Order Summary */}
-//       <section className="mb-6">
-//         <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-green-500">
-//           Order Summary
-//         </h2>
-//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-//           <div>
-//             <p>
-//               <strong className="dark:text-pink-200">Order Number:</strong>{" "}
-//               <span className="dark:text-white">{order.id}</span>
-//             </p>
-//             <p>
-//               <strong className="dark:text-pink-200">Order Placed:</strong>{" "}
-//               <span className="dark:text-white">{order.orderDate}</span>
-//             </p>
-//             <p>
-//               <strong className="dark:text-pink-200">Payment Method:</strong>{" "}
-//               <span className="dark:text-white">Cash On Delivery</span>
-//             </p>
-//           </div>
-//           <div>
-//             <p>
-//               <strong className="dark:text-pink-200">Total:</strong> ₹
-//               <span className="dark:text-white">{order.totalPrice}</span>
-//             </p>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Shipping Address */}
-//       <section className="mb-6 bg-gray-50 p-4 rounded-lg shadow dark:bg-blue-100">
-//         <h2 className="text-xl font-semibold mb-2">Shipping Address</h2>
-//         <div className="text-sm">
-//           <p>
-//             <strong>Name:</strong> {addressFields["Name"]}
-//           </p>
-//           <p>
-//             <strong>Phone:</strong> {addressFields["Phone"]}
-//           </p>
-//           <p>
-//             <strong>Address Type:</strong> {addressFields["Type"]},{""}
-//           </p>
-//           <p>
-//             <strong>Address:</strong> {addressFields["House No"]},{" "}
-//             {addressFields["Landmark"]}, {addressFields["City"]},{" "}
-//             {addressFields["Region"]}-{addressFields["PinCode"]}
-//           </p>
-//         </div>
-//       </section>
-
-//       {/* Ordered Item */}
-//       <section className="mb-6">
-//         <h2 className="text-xl font-semibold mb-2 dark:text-green-500">
-//           Ordered Item
-//         </h2>
-//         <div className="space-y-4">
-//           <div className="flex items-center gap-4 border rounded-lg p-4 shadow-sm bg-white dark:bg-orange-200">
-//             <div className="flex-shrink-0">
-//               {order.imageUrl && (
-//                 <img
-//                   src={order.imageUrl}
-//                   alt={order.productName}
-//                   className="w-32 h-32 object-cover rounded-lg"
-//                 />
-//               )}
-//             </div>
-
-//             <div className="text-gray-700 font-medium flex-1 text-sm dark:text-green-600">
-//               <p className="font-semibold text-base">{order.productName}</p>
-//               <p>
-//                 <span className="dark:font-bold">Quantity:</span>{" "}
-//                 {order.orderQuantity}
-//               </p>
-//               <p>
-//                 <span className="dark:font-bold">Price:</span> ₹
-//                 {order.productPrice}
-//               </p>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// }
-
-// export default OrderDetails;

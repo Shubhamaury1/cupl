@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Address from "./Address";
 import { jwtDecode } from "jwt-decode";
+import { IoArrowBackCircleOutline } from "react-icons/io5";
 
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
@@ -83,7 +84,8 @@ function Loginenewpage() {
   // Sidebar
   const renderSidebar = () => (
     <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen">
-      <Link to="/">
+      <Link to="/" className="flex flex-cols mt-5">
+         <IoArrowBackCircleOutline className="text-3xl mr-2" />
         <h2 className="text-xl font-bold mb-6">
           Welcome {username || "Loading..."}
         </h2>
@@ -156,6 +158,7 @@ function Loginenewpage() {
         );
 
         setOrders(response.data);
+        
       } catch (error) {
         console.error("Error loading orders:", error);
       }
@@ -236,7 +239,7 @@ function Loginenewpage() {
           <h1 className="text-4xl font-bold mb-6 text-pink-500 text-center mt-8">
             AllDayEats
           </h1>
-          <h2 className="text-xl font-semibold mb-2 text-center ">
+          <h2 className="text-xl font-semibold mb-2 text-center dark:text-pink-400">
             Welcome Back
           </h2>
           <form
@@ -244,7 +247,7 @@ function Loginenewpage() {
             className="flex flex-col space-y-6 mt-10"
           >
             <div>
-              <label>Username</label>
+              <label className="dark:text-white">Username</label>
               <input
                 type="text"
                 name="username"
@@ -259,7 +262,7 @@ function Loginenewpage() {
             </div>
 
             <div>
-              <label>Password</label>
+              <label className="dark:text-white">Password</label>
               <input
                 type="password"
                 name="password"
@@ -279,19 +282,15 @@ function Loginenewpage() {
             >
               Sign In
             </button>
+            <p
+              className="text-sm text-blue-700 hover:underline cursor-pointer"
+              onClick={() => navigate("/forgotpassword")}
+            >
+              Forgot Password
+            </p>
           </form>
 
-          {/* <p className="ml-14 text-sm mt-4 text-gray-700 mb-6">
-            Don’t have an account?{" "}
-            <a
-              onClick={() => setCurrentPage("register")}
-              className="text-blue-600 hover:underline"
-            >
-              Sign Up
-            </a>
-          </p> */}
-
-          <p className="ml-14 text-sm mt-4 text-gray-700 mb-6">
+          <p className="text-center text-sm mt-4 text-gray-700 mb-6 dark:text-white">
             Don’t have an account?{" "}
             <span
               className="text-blue-600 hover:underline cursor-pointer"

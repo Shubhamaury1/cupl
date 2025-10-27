@@ -12,6 +12,7 @@ import OrderDetails from "./pages/OrderDetails";
 import ConfirmOrderPage from "./pages/ConfirmOrderPage";
 import Admin from "./pages/Admin";
 import RegisterWithOtp from "./components/RegisterWithOtp";
+import ForgotPassword from "./components/ForgotPassword";
 
 
 function App() {
@@ -20,7 +21,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/success" element={<ProtectedRoute element={<Success />} />}/>
+          <Route
+            path="/success"
+            element={<ProtectedRoute element={<Success />} />}
+          />
           <Route path="/orderdetails/:id" element={<OrderDetails />} />
           <Route path="/confirmorderpage" element={<ConfirmOrderPage />} />
           <Route path="/loginenewpage" element={<Loginenewpage />} />
@@ -28,7 +32,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/policy" element={<Policy />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/registerwithotp" element={<RegisterWithOtp/> } />
+          <Route path="/registerwithotp" element={<RegisterWithOtp />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

@@ -19,7 +19,11 @@ function AdminOrderDashboard() {
         setOrders(response.data);
 
         // Fetch total users
-        const usersResponse = await axios.get(`${APP_URL}/Users`);
+        const usersResponse = await axios.get(`${APP_URL}/Users`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         setTotalUsers(usersResponse.data.length);
       } catch (err) {
         console.error(err);
