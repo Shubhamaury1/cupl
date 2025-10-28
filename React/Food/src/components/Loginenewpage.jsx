@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
@@ -28,9 +29,8 @@ function Loginenewpage() {
   const [activeTab, setActiveTab] = useState("orderHistory");
   const [username, setUsername] = useState(initialUsername);
   const navigate = useNavigate();
-
   const [loginData, setLoginData] = useState({ username: "", password: "" });
- 
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -50,23 +50,61 @@ function Loginenewpage() {
     }
   }, []);
 
+  // Password Validation Function
+  const validatePassword = (password) => {
+    const minLength = /.{6,}/;
+    const uppercase = /[A-Z]/;
+    const number = /[0-9]/;
+    const specialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+    if (!minLength.test(password)) {
+      toast.error("Password must be at least 6 characters long.");
+      return false;
+    }
+    if (!uppercase.test(password)) {
+      toast.error("Password must include at least one uppercase letter.");
+      return false;
+    }
+    if (!number.test(password)) {
+      toast.error("Password must include at least one number.");
+      return false;
+    }
+    if (!specialChar.test(password)) {
+      toast.error("Password must include at least one special character.");
+      return false;
+    }
+    return true;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!loginData.username || !loginData.password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    //Validate Password Before Sending Request
+    if (!validatePassword(loginData.password)) {
+      return;
+    }
+
     try {
       const response = await axios.post(`${APP_URL}/Authentication/Login`, {
         name: loginData.username,
         password: loginData.password,
       });
+
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
         const decoded = jwtDecode(response.data.token);
-        setUsername(decoded.username || loginData.username); // fallback
+        setUsername(decoded.username || loginData.username);
         setIsLoggedIn(true);
         navigate("/");
         toast.success("Login successful!");
       }
     } catch (error) {
-      toast.error("Invalid credentials! Please register.");
+      toast.error("Invalid credentials! Please register first.");
       setCurrentPage("register");
     }
   };
@@ -85,7 +123,7 @@ function Loginenewpage() {
   const renderSidebar = () => (
     <aside className="w-64 bg-gray-900 text-white p-6 min-h-screen">
       <Link to="/" className="flex flex-cols mt-5">
-         <IoArrowBackCircleOutline className="text-3xl mr-2" />
+        <IoArrowBackCircleOutline className="text-3xl mr-2" />
         <h2 className="text-xl font-bold mb-6">
           Welcome {username || "Loading..."}
         </h2>
@@ -158,7 +196,6 @@ function Loginenewpage() {
         );
 
         setOrders(response.data);
-        
       } catch (error) {
         console.error("Error loading orders:", error);
       }
@@ -232,9 +269,9 @@ function Loginenewpage() {
   );
 
   const renderLogin = () => (
-    <div className="flex min-h-screen text-gray-800 ">
+    <div className="flex min-h-screen text-gray-800">
       {/* Left Panel */}
-      <div className="w-full md:w-1/2 flex justify-center items-center bg-gary-200 p-8">
+      <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-200 p-8">
         <div className="w-full max-w-md rounded-lg shadow-lg shadow-pink-500">
           <h1 className="text-4xl font-bold mb-6 text-pink-500 text-center mt-8">
             AllDayEats
@@ -302,12 +339,13 @@ function Loginenewpage() {
         </div>
       </div>
 
-      {/* Right Panel - Background Image */}
+      {/* Right Panel */}
       <div className="hidden md:block md:w-1/2 bg-cover bg-center">
         <img src="src/assets/Order food-pana.png" alt="" />
       </div>
     </div>
   );
+
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
