@@ -9,15 +9,25 @@ import { FaSearch } from "react-icons/fa";
 function Navbar() {
   const dispatch = useDispatch();
 
-  //handle Search Apply
   const [query, setQuery] = useState("");
+
+  // Every click search
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    dispatch(setSearch(value)); // instantly trigger search
+  };
+
+  // still handle manual submit
   const handleSearch = (e) => {
     e.preventDefault();
     dispatch(setSearch(query));
-  }
+  };
+
   return (
     <>
-      <nav className="flex lg:flex-row justify-between mx-10 py-3 mb-10 ">
+      <nav className="flex lg:flex-row justify-between mx-10 py-3 mb-10">
+        {/* Left side - logo/date */}
         <div>
           <h3 className="text-xl font-bold text-gray-600 mt-4 dark:text-orange-300 mt-8">
             {new Date().toUTCString().slice(0, 16)}
@@ -27,17 +37,16 @@ function Navbar() {
           </h1>
         </div>
 
-        <form
-          onSubmit={handleSearch}
-          className="relative w-full lg:w-[25vw] "
-        >
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="relative w-full lg:w-[25vw]">
           <input
             type="search"
             name="search"
             id="search"
             placeholder="Search Here"
             autoComplete="off"
-            onChange={(e) => setQuery(e.target.value)}
+            value={query}
+            onChange={handleInputChange} // live update here
             className="w-full pr-12 pl-4 py-3 text-sm rounded-full border border-gray-300 outline-none bg-white text-gray-900 dark:bg-orange-200 dark:text-black"
           />
           <button
@@ -48,16 +57,18 @@ function Navbar() {
           </button>
         </form>
 
-        <div className=" w-40 h-40">
-          <img src="src/assets/chef.png" alt="" />
+        {/* Center Image */}
+        <div className="w-40 h-40">
+          <img src="src/assets/chef.png" alt="Chef" />
         </div>
 
+        {/* Theme toggle & user icon */}
         <ThemeController />
         <div>
           <NavLink to="/loginenewpage">
             <FaRegUserCircle
               size={60}
-              className="m-8  text-gray-700 cursor-pointer dark:text-orange-300 mr-12"
+              className="m-8 text-gray-700 cursor-pointer dark:text-orange-300 mr-12"
             />
           </NavLink>
         </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
@@ -207,7 +206,7 @@ function Loginenewpage() {
   }, [isLoggedIn]);
 
   const renderOrderHistory = () => (
-    <div className="p-8 text-gray-800 dark:bg-gray-800">
+    <div className="p-8 text-gray-800">
       <h1 className="text-2xl font-bold mb-6 dark:text-green-500">
         Order History
       </h1>
@@ -262,7 +261,7 @@ function Loginenewpage() {
   const renderHome = () => (
     <div className="flex min-h-screen">
       {renderSidebar()}
-      <main className="flex-1 bg-gray-100">
+      <main className="flex-1 bg-gray-100 dark:bg-gray-800">
         {activeTab === "orderHistory" ? renderOrderHistory() : renderAddress()}
       </main>
     </div>
