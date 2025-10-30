@@ -4,7 +4,9 @@ import { MdDelete } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
+
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
+const IMG_BASE_URL = import.meta.env.VITE_IMG_URL;
 import {
   removeFromCart,
   incrementQty,
@@ -115,7 +117,12 @@ function ItemCart({ id, name, price, img, PQunatity }) {
           onClick={DeleteToCartItem}
           className="absolute right-7 text-gray-600 cursor-pointer dark:text-red-500"
         />
-        <img src={img} alt="" className="w-[50px] h-[50px]" />
+        <img
+          //src={` ${IMG_BASE_URL}` + img}
+          src={img}
+          alt=""
+          className="w-[50px] h-[50px]"
+        />
         <div className="leaing-5 ">
           <h2 className="font-bold text-gray-800 dark:text-green-400">
             {name}

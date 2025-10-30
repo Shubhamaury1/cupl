@@ -5,8 +5,10 @@ import axios from "axios";
 import Address from "./Address";
 import { jwtDecode } from "jwt-decode";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
+import loginimage from "../assets/Order food-pana.png";
 
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
+const IMG_BASE_URL = import.meta.env.VITE_IMG_URL;
 
 function Loginenewpage() {
   const initialUsername = () => {
@@ -29,6 +31,7 @@ function Loginenewpage() {
   const [username, setUsername] = useState(initialUsername);
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({ username: "", password: "" });
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // <-- new state
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -83,10 +86,10 @@ function Loginenewpage() {
       return;
     }
 
-    //Validate Password Before Sending Request
-    if (!validatePassword(loginData.password)) {
-      return;
-    }
+    // Validate Password Before Sending Request
+    // if (!validatePassword(loginData.password)) {
+    //   return;
+    // }
 
     try {
       const response = await axios.post(`${APP_URL}/Authentication/Login`, {
@@ -104,11 +107,12 @@ function Loginenewpage() {
       }
     } catch (error) {
       toast.error("Invalid credentials! Please register first.");
-      setCurrentPage("register");
+      navigate("/loginenewpage");
     }
   };
 
-  const handleLogout = () => {
+  const handleLogoutConfirm = () => {
+    // When user confirms logout
     setIsLoggedIn(false);
     navigate("/");
     toast.success("You are logged out successfully.");
@@ -116,6 +120,7 @@ function Loginenewpage() {
     setLoginData({ username: "", password: "" });
     setUsername("");
     setCurrentPage("welcome");
+    setShowLogoutConfirm(false);
   };
 
   // Sidebar
@@ -146,7 +151,7 @@ function Loginenewpage() {
         </li>
         <li
           className="cursor-pointer hover:text-red-300 text-red-500 font-semibold"
-          onClick={handleLogout}
+          onClick={() => setShowLogoutConfirm(true)} // <-- open popup
         >
           Logout
         </li>
@@ -270,7 +275,7 @@ function Loginenewpage() {
   const renderLogin = () => (
     <div className="flex min-h-screen text-gray-800">
       {/* Left Panel */}
-      <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-200 p-8">
+      <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-100 p-8">
         <div className="w-full max-w-md rounded-lg shadow-lg shadow-pink-500">
           <h1 className="text-4xl font-bold mb-6 text-pink-500 text-center mt-8">
             AllDayEats
@@ -340,7 +345,7 @@ function Loginenewpage() {
 
       {/* Right Panel */}
       <div className="hidden md:block md:w-1/2 bg-cover bg-center">
-        <img src="src/assets/Order food-pana.png" alt="" />
+        <img src={loginimage} />
       </div>
     </div>
   );
@@ -350,6 +355,31 @@ function Loginenewpage() {
       <Toaster position="top-center" reverseOrder={false} />
       {currentPage === "login" && renderLogin()}
       {currentPage === "home" && isLoggedIn && renderHome()}
+
+      {/* ✅ Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-80 text-center">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">
+              Are you sure you want to log out?
+            </h2>
+            <div className="flex justify-around mt-6">
+              <button
+                onClick={handleLogoutConfirm}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

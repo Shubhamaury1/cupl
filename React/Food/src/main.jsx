@@ -5,11 +5,11 @@ import App from './App.jsx'
 import { Provider } from "react-redux"
 import Store from './redux/Store.js'
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={Store}>
       <div className=' dark:bg-gray-900 h-screen'>
         <App />
       </div>
     </Provider>
-  </StrictMode>
+  //  </StrictMode> 
 );

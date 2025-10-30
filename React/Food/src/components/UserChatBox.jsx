@@ -207,19 +207,21 @@ function UserChatBox() {
   // Fetch unread messages count from server
   const fetchUnreadCount = () => {
     if (!userId || !adminId) return;
-    fetch(`https://localhost:7076/api/chat/unreadcount/${userId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const adminUnread = data.find((u) => u.userId === adminId);
-        setUnreadCount(adminUnread ? adminUnread.count : 0);
-      })
-      .catch((err) => console.error(err));
+    // fetch(`https://localhost:7076/api/chat/unreadcount/${userId}`)
+       fetch(`http://192.168.1.212/Backend/api/chat/unreadcount/${userId}`)
+         .then((res) => res.json())
+         .then((data) => {
+           const adminUnread = data.find((u) => u.userId === adminId);
+           setUnreadCount(adminUnread ? adminUnread.count : 0);
+         })
+         .catch((err) => console.error(err));
   };
 
   // Fetch chat history
   const fetchChatHistory = () => {
     if (!userId || !adminId) return;
-    fetch(`https://localhost:7076/api/chat/history/${userId}/${adminId}`)
+  // fetch(`https://localhost:7076/api/chat/history/${userId}/${adminId}`)
+    fetch(`http://192.168.1.212/Backend/api/chat/history/${userId}/${adminId}`)
       .then((res) => res.json())
       .then((data) => setMessages(data))
       .catch((err) => console.error(err));
@@ -228,11 +230,17 @@ function UserChatBox() {
   // Mark messages as read
   const markAsRead = () => {
     if (!userId || !adminId) return;
-    fetch(`https://localhost:7076/api/chat/markread/${userId}/${adminId}`, {
-      method: "POST",
-    })
-      .then(() => setUnreadCount(0))
-      .catch((err) => console.error(err));
+    // fetch(`https://localhost:7076/api/chat/markread/${userId}/${adminId}`, {
+    //   method: "POST",
+  // })
+      fetch(
+        `http://192.168.1.212/Backend/api/chat/markread/${userId}/${adminId}`,
+        {
+          method: "POST",
+        }
+      )
+        .then(() => setUnreadCount(0))
+        .catch((err) => console.error(err));
   };
 
   // SignalR connection
@@ -240,7 +248,8 @@ function UserChatBox() {
     if (!userId || !adminId) return;
 
     const conn = new signalR.HubConnectionBuilder()
-      .withUrl(`https://localhost:7076/chatHub?userId=${userId}`)
+      // .withUrl(`https://localhost:7076/chatHub?userId=${userId}`)
+      .withUrl(`http://192.168.1.212/Backend/chatHub?userId=${userId}`)
       .withAutomaticReconnect()
       .build();
 

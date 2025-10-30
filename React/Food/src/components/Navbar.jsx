@@ -5,6 +5,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import ThemeController from "./ThemeController";
 import { FaSearch } from "react-icons/fa";
+import chef from "../assets/chef.png"
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -59,7 +60,8 @@ function Navbar() {
 
         {/* Center Image */}
         <div className="w-40 h-40">
-          <img src="src/assets/chef.png" alt="Chef" />
+          {/* <img src="src/assets/chef.png" alt="Chef" /> */}
+          <img src={chef} alt="Chef" />
         </div>
 
         {/* Theme toggle & user icon */}

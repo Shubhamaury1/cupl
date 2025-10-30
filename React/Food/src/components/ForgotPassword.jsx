@@ -172,6 +172,7 @@ import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import loginimage from "../assets/Order food-pana.png";
 
 const BASE_URL = import.meta.env.VITE_FORGOT_PASSWORD_URL;
 
@@ -381,7 +382,8 @@ function ForgotPassword() {
 
         {/* Right side image */}
         <div className="hidden md:block md:w-1/2 bg-cover bg-center">
-          <img src="src/assets/Order food-pana.png" alt="Forgot password" />
+          {/* <img src="src/assets/Order food-pana.png" alt="Forgot password" /> */}
+          <img src={loginimage} />
         </div>
       </div>
     </>

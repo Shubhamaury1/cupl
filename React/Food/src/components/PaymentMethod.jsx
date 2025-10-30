@@ -1,4 +1,5 @@
 import React from "react";
+import razorpay from "../assets/paymentimage/razorpay.png";
 const paymentOptions = [
   {
     id: "cashOnDelivery",
@@ -10,7 +11,7 @@ const paymentOptions = [
     id: "razorpay",
     label: "Razorpay (UPI/Card/Netbanking)",
     value: "razorpay",
-   
+    image: razorpay,
   },
 ];
 const PaymentMethod = ({ paymentMethod, handlePaymentMethodChange }) => {

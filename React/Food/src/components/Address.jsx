@@ -4,13 +4,13 @@ const APP_URL = import.meta.env.VITE_LOCAL_URL;
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-
 function Address() {
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [addressList, setAddressList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   const [saveaddress, setSaveaddress] = useState({
     userName: "",
@@ -22,28 +22,26 @@ function Address() {
     city: "",
     country: "",
   });
-  
+
+  // Fetch user addresses on load
   useEffect(() => {
     const fetchAddresses = async () => {
-    const token = localStorage.getItem("token");
-    const decode = jwtDecode(token);
-    const userid = decode.userid;
-      //console.log("Userid is", userid);
-      
-       if (!userid || !token) {
-         toast.error("User not authenticated.");
-         return;
-       }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("User not authenticated.");
+        setLoading(false);
+        return;
+      }
+
+      const decode = jwtDecode(token);
+      const userid = decode.userid;
 
       try {
         const response = await axios.get(`${APP_URL}/Addresses/${userid}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach the token to the request
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        const data = response.data;
 
-        const normalized = data.map((item) => ({
+        const normalized = response.data.map((item) => ({
           id: item.id,
           userName: item.userName || item.name || "",
           phone: item.phone || "",
@@ -66,11 +64,60 @@ function Address() {
     fetchAddresses();
   }, []);
 
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Prevent non-numeric input for phone & pincode
+    if (name === "phone" && value && !/^\d*$/.test(value)) return;
+    if (name === "pincode" && value && !/^\d*$/.test(value)) return;
+
     setSaveaddress((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validate all fields before submission
+  const validate = () => {
+    let newErrors = {};
+
+    if (!saveaddress.userName.trim())
+      newErrors.userName = "Full name is required";
+    else if (saveaddress.userName.length > 50)
+      newErrors.userName = "Max 50 characters allowed";
+
+    if (!saveaddress.phone.trim()) newErrors.phone = "Phone is required";
+    else if (!/^\d{10}$/.test(saveaddress.phone))
+      newErrors.phone = "Phone must be exactly 10 digits";
+
+    if (!saveaddress.house.trim()) newErrors.house = "House is required";
+    else if (saveaddress.house.length > 10)
+      newErrors.house = "Max 10 characters allowed";
+
+    if (!saveaddress.landmark.trim()) newErrors.landmark = "Landmark required";
+    else if (saveaddress.landmark.length > 50)
+      newErrors.landmark = "Max 50 characters allowed";
+
+    if (!saveaddress.addresstype.trim())
+      newErrors.addresstype = "Address type required";
+    else if (saveaddress.addresstype.length > 50)
+      newErrors.addresstype = "Max 50 characters allowed";
+
+    if (!saveaddress.pincode.trim()) newErrors.pincode = "Pincode required";
+    else if (!/^\d{6}$/.test(saveaddress.pincode))
+      newErrors.pincode = "Pincode must be exactly 6 digits";
+
+    if (!saveaddress.city.trim()) newErrors.city = "City is required";
+    else if (saveaddress.city.length > 50)
+      newErrors.city = "Max 50 characters allowed";
+
+    if (!saveaddress.country.trim()) newErrors.country = "Country required";
+    else if (saveaddress.country.length > 50)
+      newErrors.country = "Max 50 characters allowed";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Reset form
   const resetForm = () => {
     setSaveaddress({
       userName: "",
@@ -82,17 +129,18 @@ function Address() {
       city: "",
       country: "",
     });
+    setErrors({});
     setIsEditing(false);
     setEditIndex(null);
   };
 
   const token = localStorage.getItem("token");
-  const decode = jwtDecode(token);
-  const userid = decode.userid;
+  const decode = token ? jwtDecode(token) : {};
+  const userid = decode?.userid;
+
   const mapToApiAddress = (addr, id = null) => ({
     ...(id !== null && { id }),
-
-    uid: userid, // Replace with dynamic user ID if needed
+    uid: userid,
     addressType: addr.addresstype,
     userName: addr.userName,
     houseNumber: addr.house,
@@ -105,68 +153,45 @@ function Address() {
     landMark: addr.landmark,
   });
 
+  // Submit or Update address
   const handleSubmitAddress = async (e) => {
     e.preventDefault();
-
-    if (
-      !saveaddress.userName ||
-      !saveaddress.phone ||
-      !saveaddress.pincode ||
-      !saveaddress.city
-    ) {
-      toast.error("Please fill all required fields!");
+    if (!validate()) {
+      toast.error("Please Enter Valid Address ");
       return;
     }
-     const token = localStorage.getItem("token"); 
-     if (!token) {
-       toast.error("User is not authenticated to edit.");
-       return;
+
+    if (!token) {
+      toast.error("User is not authenticated.");
+      return;
     }
-    
+
     try {
       if (isEditing && editIndex !== null) {
         const idToUpdate = addressList[editIndex].id;
 
-        console.log("Hello");
-        
         const response = await axios.put(
           `${APP_URL}/Addresses/${userid}`,
           mapToApiAddress(saveaddress, idToUpdate),
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const updatedAddress = {
-          ...saveaddress,
-          id: response.data.id,
-        };
-
         const updatedList = [...addressList];
-        updatedList[editIndex] = updatedAddress;
+        updatedList[editIndex] = { ...saveaddress, id: response.data.id };
         setAddressList(updatedList);
-        toast.success("Address updated!");
+        toast.success("Address updated successfully!");
       } else {
         const response = await axios.post(
           `${APP_URL}/Addresses`,
           mapToApiAddress(saveaddress),
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         setAddressList((prev) => [
           ...prev,
-          {
-            ...saveaddress,
-            id: response.data.id,
-          },
+          { ...saveaddress, id: response.data.id },
         ]);
-        toast.success("Address added!");
+        toast.success("Address added successfully!");
       }
 
       resetForm();
@@ -185,24 +210,17 @@ function Address() {
 
   const handleDelete = async (index) => {
     const idToDelete = addressList[index].id;
-    const token = localStorage.getItem("token");
     if (!token) {
-      toast.error("User is not authenticated.");
+      toast.error("User not authenticated.");
       return;
     }
     try {
       await axios.delete(`${APP_URL}/Addresses/${userid}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const updatedList = addressList.filter((_, i) => i !== index);
-      setAddressList(updatedList);
+      setAddressList(addressList.filter((_, i) => i !== index));
       toast.success("Address deleted!");
-
-      if (selectedAddressIndex === index) {
-        setSelectedAddressIndex(null);
-      }
+      if (selectedAddressIndex === index) setSelectedAddressIndex(null);
     } catch (error) {
       toast.error("Delete failed: " + error.message);
     }
@@ -221,7 +239,7 @@ function Address() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
           {[
             { label: "Full Name", name: "userName", placeholder: "Rahul" },
-            { label: "Phone", name: "phone", placeholder: "+91 1234567890" },
+            { label: "Phone", name: "phone", placeholder: "1234567890" },
             { label: "House", name: "house", placeholder: "123" },
             {
               label: "Landmark",
@@ -245,9 +263,16 @@ function Address() {
                 value={saveaddress[field.name] || ""}
                 onChange={handleChange}
                 placeholder={field.placeholder}
-                className="w-full border px-2 py-2 rounded bg-white rounded-xl dark:shadow-md"
+                className={`w-full border px-2 py-2 rounded bg-white rounded-xl dark:shadow-md ${
+                  errors[field.name] ? "border-red-500" : "border-gray-300"
+                }`}
                 required
               />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[field.name]}
+                </p>
+              )}
             </div>
           ))}
         </div>

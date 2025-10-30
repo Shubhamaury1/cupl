@@ -206,6 +206,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import loginimage from "../assets/Order food-pana.png";
 
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 
@@ -476,7 +477,8 @@ export default function RegisterWithOtp() {
 
       {/* Right - Image */}
       <div className="hidden md:block md:w-1/2 bg-cover bg-center">
-        <img src="src/assets/Order food-pana.png" alt="" />
+        {/* <img src="src/assets/Order food-pana.png" alt="" /> */}
+        <img src={loginimage} />
       </div>
     </div>
   );
