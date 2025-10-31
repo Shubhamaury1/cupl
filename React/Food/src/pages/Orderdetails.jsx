@@ -306,8 +306,8 @@ function OrderDetails() {
           <div className="flex-shrink-0">
             {order.imageUrl && (
               <img
-                // src={`${IMG_BASE_URL}` + order.imageUrl}
-                src={order.imageUrl}
+                src={`${IMG_BASE_URL}` + order.imageUrl}
+                //src={order.imageUrl}
                 alt={order.productName}
                 className="w-32 h-32 object-cover rounded-lg"
               />

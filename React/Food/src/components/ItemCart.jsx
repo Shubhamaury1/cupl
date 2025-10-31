@@ -25,11 +25,13 @@ function ItemCart({ id, name, price, img, PQunatity }) {
         if (response.status === 200) {
           setTotalProductQuantity(response.data.totalProductQuantity);
         } else {
-          toast.error("Error fetching product data.");
+          toast.error("Error fetching product data.", { id: "unique-toast" });
         }
       } catch (error) {
         console.error("Error during the API call:", error);
-        toast.error("Something went wrong while fetching product data.");
+        toast.error("Something went wrong while fetching product data.", {
+          id: "unique-toast",
+        });
       }
     };
     fetchProductQuantity();
@@ -41,19 +43,27 @@ function ItemCart({ id, name, price, img, PQunatity }) {
       const response = await axios.delete(`${APP_URL}/Carts/${id}`);
       if (response.status === 200) {
         dispatch(removeFromCart(cartItem));
-        toast(`${name} removed from your cart`, { icon: "👋" });
+        toast(
+          `${name} removed from your cart`,
+          { icon: "👋" },
+          { id: "unique-toast" }
+        );
       } else {
-        toast.error("Error removing item from cart.");
+        toast.error("Error removing item from cart.", { id: "unique-toast" });
       }
     } catch (error) {
       console.error("Error during the API call:", error);
-      toast.error("Something went wrong while removing the item.");
+      toast.error("Something went wrong while removing the item.", {
+        id: "unique-toast",
+      });
     }
   };
 
   const handleIncrement = async () => {
     if (productQuantity >= totalProductQuantity) {
-      toast.error("Cannot add more items than available in stock.");
+      toast.error("Cannot add more items than available in stock.", {
+        id: "unique-toast",
+      });
       return;
     }
     try {
@@ -71,13 +81,17 @@ function ItemCart({ id, name, price, img, PQunatity }) {
             PQunatity: productQuantity + 1,
           })
         );
-        toast.success(`${name} updated in cart`);
+        toast.success(`${name} updated in cart`, { id: "unique-toast" });
       } else {
-        toast.error("Error occurred while updating the cart");
+        toast.error("Error occurred while updating the cart", {
+          id: "unique-toast",
+        });
       }
     } catch (error) {
       console.error("Error during the API call:", error);
-      toast.error("Something went wrong while updating the item.");
+      toast.error("Something went wrong while updating the item.", {
+        id: "unique-toast",
+      });
     }
   };
 
@@ -100,13 +114,17 @@ function ItemCart({ id, name, price, img, PQunatity }) {
             PQunatity: productQuantity - 1,
           })
         );
-        toast.success(`${name} updated in cart`);
+        toast.success(`${name} updated in cart`, { id: "unique-toast" });
       } else {
-        toast.error("Error occurred while updating the cart");
+        toast.error("Error occurred while updating the cart", {
+          id: "unique-toast",
+        });
       }
     } catch (error) {
       console.error("Error during the API call:", error);
-      toast.error("Something went wrong while updating the item.");
+      toast.error("Something went wrong while updating the item.", {
+        id: "unique-toast",
+      });
     }
   };
 
@@ -118,8 +136,8 @@ function ItemCart({ id, name, price, img, PQunatity }) {
           className="absolute right-7 text-gray-600 cursor-pointer dark:text-red-500"
         />
         <img
-          //src={` ${IMG_BASE_URL}` + img}
-          src={img}
+          src={` ${IMG_BASE_URL}` + img}
+          //src={img}
           alt=""
           className="w-[50px] h-[50px]"
         />

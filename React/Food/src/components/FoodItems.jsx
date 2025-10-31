@@ -174,7 +174,7 @@ function FoodItems() {
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false}/>
       <div className="flex flex-wrap gap-12 justify-center lg:justify-start mx-10 my-10">
         {foods.length > 0 ? (
           foods.map((item) => (

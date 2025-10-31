@@ -1,9 +1,11 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import UserChatBox from "./UserChatBox";
 
 export default function Footer() {
+
+  const location = useLocation();
 
   const token = localStorage.getItem("token");
   let isAdmin = false;
@@ -27,6 +29,18 @@ export default function Footer() {
         <hr />
         <footer className="bg-gray-400 text-white dark:bg-orange-300 ">
           <section className="flex sm:flex-row lg:flex-row justify-center dark:font-bold">
+            {/*             
+            <NavLink to="/" className="p-4">
+              Home
+            </NavLink> */}
+
+            {/* Show Home link only if NOT on the home page */}
+            {location.pathname !== "/" && (
+              <NavLink to="/" className="p-4">
+                Home
+              </NavLink>
+            )}
+
             <NavLink to="/about" className=" p-4">
               About us
             </NavLink>
@@ -36,9 +50,7 @@ export default function Footer() {
             <NavLink to="/policy" className="p-4">
               Policy
             </NavLink>
-            {/* <NavLink to="/userchatbox" className="p-4">
-              ChatBox
-            </NavLink> */}
+
             {isAdmin && (
               <NavLink to="/admin" className="p-4">
                 Admin

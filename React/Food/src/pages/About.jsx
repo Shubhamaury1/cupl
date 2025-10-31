@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import Footer from "../components/Footer";
+
 function About() {
   return (
     
@@ -77,19 +79,8 @@ function About() {
         animate={{ scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Link
-          to="/contact"
-          className="px-6 py-3 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition"
-        >
-          Contact Us
-        </Link>
-        <Link
-          to="/"
-          className="ml-4 px-6 py-3 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 transition"
-        >
-          Go to Back
-        </Link>
       </motion.div>
+       <Footer/>
     </div>
   );
 }

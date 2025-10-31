@@ -30,7 +30,7 @@ function Loginenewpage() {
   const [activeTab, setActiveTab] = useState("orderHistory");
   const [username, setUsername] = useState(initialUsername);
   const navigate = useNavigate();
-  const [loginData, setLoginData] = useState({ username: "", password: "" });
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // <-- new state
 
   useEffect(() => {
@@ -81,19 +81,19 @@ function Loginenewpage() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!loginData.username || !loginData.password) {
+    if (!loginData.email || !loginData.password) {
       toast.error("Please fill in all fields.");
       return;
     }
 
-    // Validate Password Before Sending Request
+    //Validate Password Before Sending Request
     // if (!validatePassword(loginData.password)) {
     //   return;
     // }
 
     try {
       const response = await axios.post(`${APP_URL}/Authentication/Login`, {
-        name: loginData.username,
+        email: loginData.email,
         password: loginData.password,
       });
 
@@ -117,7 +117,7 @@ function Loginenewpage() {
     navigate("/");
     toast.success("You are logged out successfully.");
     localStorage.removeItem("token");
-    setLoginData({ username: "", password: "" });
+    setLoginData({ email: "", password: "" });
     setUsername("");
     setCurrentPage("welcome");
     setShowLogoutConfirm(false);
@@ -229,7 +229,8 @@ function Loginenewpage() {
               <div className="border rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center dark:bg-blue-100">
                 <div className="mb-4 sm:mb-0 flex justify-center sm:justify-start">
                   <img
-                    src={order.imageUrl}
+                    //src={order.imageUrl}
+                    src={`${IMG_BASE_URL}` + order.imageUrl}
                     alt={order.productName}
                     className="w-32 h-32 object-cover rounded-lg"
                   />
@@ -287,18 +288,18 @@ function Loginenewpage() {
             onSubmit={handleLogin}
             className="flex flex-col space-y-6 mt-10"
           >
-            <div>
-              <label className="dark:text-white">Username</label>
+            <div className=" flex flex-col">
+              <label className="dark:text-white">Email</label>
               <input
-                type="text"
-                name="username"
-                placeholder="Rahul"
-                value={loginData.username}
+                type="email"
+                name="email"
+                placeholder="Rahul12@gmail.com"
+                value={loginData.email}
                 onChange={(e) =>
-                  setLoginData({ ...loginData, username: e.target.value })
+                  setLoginData({ ...loginData, email: e.target.value })
                 }
                 required
-                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+                className="w-[312px] border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
               />
             </div>
 
@@ -385,3 +386,9 @@ function Loginenewpage() {
 }
 
 export default Loginenewpage;
+
+
+
+
+
+

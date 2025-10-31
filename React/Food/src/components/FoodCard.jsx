@@ -20,7 +20,7 @@ function FoodCard({ id, name, price, img, rating, desc, stock, isBestSeller }) {
       userid = decode.userid;
     } catch (error) {
       console.error("Error decoding token:", error);
-      toast.error("Invalid or expired token.");
+      toast.error("Invalid or expired token.",{id: "unique-toast"});
     }
   }
 
@@ -36,11 +36,13 @@ function FoodCard({ id, name, price, img, rating, desc, stock, isBestSeller }) {
         if (response.status === 200) {
           setTotalProductQuantity(response.data.totalProductQuantity);
         } else {
-          toast.error("Error fetching product data.");
+          toast.error("Error fetching product data.",{id: "unique-toast"});
         }
       } catch (error) {
         console.error("Error during API call:", error);
-        toast.error("Something went wrong while fetching product data.");
+        toast.error("Something went wrong while fetching product data.", {
+          id: "unique-toast",
+        });
       }
     };
     fetchTotalProductQuantity();
@@ -49,7 +51,7 @@ function FoodCard({ id, name, price, img, rating, desc, stock, isBestSeller }) {
   // Add to Cart handler
   const handleAddToCart = async () => {
     if (totalProductQuantity === 0) {
-      toast.error("Item is Out of Stock.");
+      toast.error("Item is Out of Stock.", { id: "unique-toast" });
       return;
     }
 
@@ -73,10 +75,12 @@ function FoodCard({ id, name, price, img, rating, desc, stock, isBestSeller }) {
       dispatch(addToCart(cartItem));
       await axios.post(`${APP_URL}/Carts`, cartItem);
       setProductQuantity(productQuantity + 1);
-      toast.success(`${name} has been added to the cart`);
+      toast.success(`${name} has been added to the cart`, {
+        id: "unique-toast",
+      });
     } catch (error) {
       console.error("Error adding item to cart:", error);
-      toast.error("Item is Out Of Stock.");
+      toast.error("Please Logging First.", { id: "unique-toast" });
     }
   };
 
@@ -88,8 +92,8 @@ function FoodCard({ id, name, price, img, rating, desc, stock, isBestSeller }) {
   return (
     <div className="relative font-bold w-[250px] bg-white p-5 flex flex-col rounded-lg gap-2 text-gray-900 dark:bg-orange-200">
       <img
-        // src={`${IMG_BASE_URL}` + img}
-        src={img}
+        src={`${IMG_BASE_URL}` + img}
+        //src={img}
         alt={name}
         className="w-auto h-[130px] hover:scale-110 cursor-grab rounded-lg transition-all duration-500 ease-in-out"
       />
