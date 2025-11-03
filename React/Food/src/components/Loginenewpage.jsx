@@ -6,6 +6,7 @@ import Address from "./Address";
 import { jwtDecode } from "jwt-decode";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import loginimage from "../assets/Order food-pana.png";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const APP_URL = import.meta.env.VITE_LOCAL_URL;
 const IMG_BASE_URL = import.meta.env.VITE_IMG_URL;
@@ -32,6 +33,13 @@ function Loginenewpage() {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // <-- new state
+  const [showPassword, setShowPassword] = useState(false); // show password
+
+  // show password toggle
+  const togglePassword = (e) => {
+      e.preventDefault();
+      setShowPassword(!showPassword);
+    };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -303,10 +311,12 @@ function Loginenewpage() {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="dark:text-white">Password</label>
               <input
-                type="password"
+                // type="password"
+                type={showPassword ? "text" : "password"}
+                id="password"
                 name="password"
                 placeholder="Rahul@123"
                 value={loginData.password}
@@ -316,6 +326,14 @@ function Loginenewpage() {
                 required
                 className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
               />
+
+              <button
+                onClick={togglePassword}
+                type="button"
+                className="absolute inset-y-0 right-4 flex items-center top-6 text-gray-500"
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
             </div>
 
             <button
@@ -386,9 +404,6 @@ function Loginenewpage() {
 }
 
 export default Loginenewpage;
-
-
-
 
 
 
