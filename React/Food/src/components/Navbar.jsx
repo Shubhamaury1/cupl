@@ -27,13 +27,13 @@ function Navbar() {
 
   return (
     <>
-      <nav className="flex lg:flex-row justify-between mx-10 py-3 mb-10">
+      <nav className="flex flex-col lg:flex-row md:flex-col sm:flex-col justify-between mx-10 py-3 mb-10">
         {/* Left side - logo/date */}
         <div>
           <h3 className="text-xl font-bold text-gray-600 mt-4 dark:text-orange-300 mt-8">
             {new Date().toUTCString().slice(0, 16)}
           </h3>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-orange-300">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-orange-300 ">
             AllDayEats
           </h1>
         </div>
@@ -58,9 +58,8 @@ function Navbar() {
           </button>
         </form>
 
-        {/* Center Image */}
+      
         <div className="w-40 h-40">
-          {/* <img src="src/assets/chef.png" alt="Chef" /> */}
           <img src={chef} alt="Chef" />
         </div>
 

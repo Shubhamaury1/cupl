@@ -51,8 +51,8 @@ function Contact() {
   };
 
   return (
-  
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 dark:bg-gray-800">
+    <>
+      <div className="h-[716px] bg-gray-50 flex flex-col items-center p-6 dark:bg-gray-800">
         {/* Title */}
         <motion.h1
           className="text-4xl font-bold text-gray-800 mt-12 mb-4 dark:text-green-400"
@@ -165,9 +165,9 @@ function Contact() {
         >
           Go to Back
         </Link> */}
-        <Footer/>
       </div>
-    
+      <Footer />
+    </>
   );
 }
 

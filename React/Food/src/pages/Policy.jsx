@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 function Policy() {
   return (
     <>
-      <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center dark:bg-gray-800 pb-24">
+      <div className="h-[716px] bg-gray-50 p-6 flex flex-col items-center dark:bg-gray-800 pb-24">
         {/* Page Title */}
         <motion.h1
           className="text-4xl font-bold text-gray-800 mt-2 mb-4 dark:text-green-400"

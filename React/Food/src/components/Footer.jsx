@@ -24,7 +24,7 @@ export default function Footer() {
   return (
     <>
       {!isAdmin && <UserChatBox />}
-      <div className="mt-24 fixed bottom-0 w-full ">
+      <div className="mt-24 bottom-0 w-full ">
         <hr />
         <footer className="bg-gray-400 text-white dark:bg-orange-300 ">
           <section className="flex sm:flex-row lg:flex-row justify-center dark:font-bold">
